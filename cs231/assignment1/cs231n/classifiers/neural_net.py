@@ -85,6 +85,7 @@ class TwoLayerNet(object):
     o1=np.maximum(0,net1)
     net2=o1.dot(W2)+b2
     o2=softmax_output(net2)
+        
     scores=net2
     print "net"
     print net2.shape
@@ -106,6 +107,7 @@ class TwoLayerNet(object):
     # classifier loss. So that your results match ours, multiply the            #
     # regularization loss by 0.5                                                #
     #############################################################################
+    
     outputs=o2
     expected_outputs=outputs[xrange(n),y]
     loss+=np.sum(-np.log(expected_outputs))
@@ -122,13 +124,28 @@ class TwoLayerNet(object):
     # and biases. Store the results in the grads dictionary. For example,       #
     # grads['W1'] should store the gradient on W1, and be a matrix of same size #
     #############################################################################
+    # N=5, D=4, H=10, C=3
+    # X: size N X D (5x4)          
+    # W1: Size D X H (4x10)
+    # W2: Size H X C  (10x3)
+    #net1=X.dot(W1)+b1 # size N x H (5x10)
+    #o1=np.maximum(0,net1) # size N X H (5x10)
+    #net2=o1.dot(W2)+b2 # size N X C (5x3)
+    #o2=softmax_output(net2) # size N X C (5x3)
+    #expected_outputs=outputs[xrange(n),y]
+    #loss+=np.sum(-np.log(expected_outputs))
+    #loss/=n
+    #loss+=0.5*reg*( np.sum(W1*W1)+np.sum(W2*W2))
+   
+    outputs=o2 # size N X C
     outputs[xrange(n),y]+=-1.0
-    dW2 = (outputs.T.dot(X)).T
+    dW2 = (outputs.T.dot(net2)).T
     print outputs.shape
     print X.shape
     print dW2.shape
     print W2.shape
-    dW2  +=reg*W2
+    
+    #dW2  +=reg*W2
     dW1 = np.zeros(W1.shape)
     dW1  +=reg*W1
     db1=0
