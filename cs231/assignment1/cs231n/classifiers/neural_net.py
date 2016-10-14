@@ -87,9 +87,9 @@ class TwoLayerNet(object):
     o2=softmax_output(net2)
         
     scores=net2
-    print "net"
-    print net2.shape
-    print o2.shape
+    #print "net"
+    #print net2.shape
+    #print o2.shape
     #############################################################################
     #                              END OF YOUR CODE                             #
     #############################################################################
@@ -136,17 +136,29 @@ class TwoLayerNet(object):
     #loss+=np.sum(-np.log(expected_outputs))
     #loss/=n
     #loss+=0.5*reg*( np.sum(W1*W1)+np.sum(W2*W2))
-   
-    outputs=o2 # size N X C
-    outputs[xrange(n),y]+=-1.0
-    dW2 = (outputs.T.dot(net2)).T
-    print outputs.shape
-    print X.shape
-    print dW2.shape
-    print W2.shape
-    
-    #dW2  +=reg*W2
     dW1 = np.zeros(W1.shape)
+    dW2 = np.zeros(W2.shape)
+    db1 = np.zeros(b1.shape)
+    db2 = np.zeros(b2.shape)
+    dE_net2=o2 # size N X C
+    dE_net2[xrange(n),y]+=-1.0
+    for i in xrange(n):
+        dE_dW2=  np.outer(o1[i,:],dE_net2[i,:])
+        dW2+=dE_dW2
+        
+        dnet2_do1=W2
+        dE_do1=dnet2_do1.dot(dE_net2[i,:])
+        
+    dW2=dW2/n
+    
+    #dW2 = (outputs.T.dot(net2)).T
+    #print outputs.shape
+    #print X.shape
+    #print dW2.shape
+    #print W2.shape
+    
+    dW2  +=reg*W2
+    
     dW1  +=reg*W1
     db1=0
     db2=0
