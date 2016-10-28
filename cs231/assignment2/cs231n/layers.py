@@ -24,6 +24,9 @@ def affine_forward(x, w, b):
   # will need to reshape the input into rows.                                 #
   #############################################################################
   n=x.shape[0]
+  #print x.shape
+  #print w.shape
+
   x2=np.reshape(x,(n,-1))
   out=x2.dot(w)+b
 
@@ -361,8 +364,23 @@ def conv_forward_naive(x, w, b, conv_param):
   # TODO: Implement the convolutional forward pass.                           #
   # Hint: you can use the function np.pad for padding.                        #
   #############################################################################
-
-  x2 = np.pad(x, pad_width=conv_param['pad'], mode='constant', constant_values=0)
+  pad=conv_param['pad']
+  stride=conv_param['stride']
+  N,C,H,W=x.shape
+  F,_,HH,WW=w.shape
+  extended_H=1+(H+2*pad-HH)
+  extended_W=1+(W+2*pad-WW)
+  assert (extended_H % stride != 0)
+  assert (extended_W % stride != 0)
+  H2=extended_H/stride
+  W2=extended_W/stride
+  x2 = np.pad(x, pad_width=pad, mode='constant', constant_values=0)
+  out=np.zeros(N,C,H2,W2)
+  for i in xrange(N):
+      for j in xrange(C):
+          min_k=
+          max_k=
+          for k in [x*stride for x in range(10)]:
 
   #############################################################################
   #                             END OF YOUR CODE                              #
