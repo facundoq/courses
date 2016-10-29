@@ -205,7 +205,7 @@ def batchnorm_backward(dout, cache):
   """
   Backward pass for batch normalization.
 
-  For this implementation, you should write out a computation graph for
+  For this implementation, you should write out a computation graHH for
   batch normalization on paper and propagate gradients backward through
   intermediate nodes.
 
@@ -289,7 +289,7 @@ def dropout_forward(x, dropout_param):
 
   if mode == 'train':
     ###########################################################################
-    # TODO: Implement the training phase forward pass for inverted dropout.   #
+    # TODO: Implement the training HHase forward pass for inverted dropout.   #
     # Store the dropout mask in the mask variable.                            #
     ###########################################################################
     pass
@@ -298,7 +298,7 @@ def dropout_forward(x, dropout_param):
     ###########################################################################
   elif mode == 'test':
     ###########################################################################
-    # TODO: Implement the test phase forward pass for inverted dropout.       #
+    # TODO: Implement the test HHase forward pass for inverted dropout.       #
     ###########################################################################
     pass
     ###########################################################################
@@ -325,7 +325,7 @@ def dropout_backward(dout, cache):
   dx = None
   if mode == 'train':
     ###########################################################################
-    # TODO: Implement the training phase backward pass for inverted dropout.  #
+    # TODO: Implement the training HHase backward pass for inverted dropout.  #
     ###########################################################################
     pass
     ###########################################################################
@@ -368,49 +368,72 @@ def conv_forward_naive(x, w, b, conv_param):
   stride=conv_param['stride']
   N,C,H,W=x.shape
   F,_,HH,WW=w.shape
-  extended_H=1+(H+2*pad-HH)
-  extended_W=1+(W+2*pad-WW)
-  assert (extended_H % stride != 0)
-  assert (extended_W % stride != 0)
-  H2=extended_H/stride
-  W2=extended_W/stride
-  x2 = np.pad(x, pad_width=pad, mode='constant', constant_values=0)
-  out=np.zeros(N,C,H2,W2)
-  for i in xrange(N):
-      for j in xrange(C):
-          min_k=
-          max_k=
-          for k in [x*stride for x in range(10)]:
+  extended_H=(H+2*pad-HH)
+  extended_W=(W+2*pad-WW)
+  H2=1+extended_H/stride
+  W2=1+extended_W/stride
+  x_pad = np.pad(x, pad_width=((0,0),(0,0),(pad,pad),(pad,pad)), mode='constant', constant_values=0)
+
+  out=np.zeros((N,F,H2,W2))
+  for im in xrange(N):
+      for f in xrange(F):
+          for i in xrange(H2): #out indices
+              i_from=i*stride #x_pad indices
+              i_to=i_from+HH
+              for j in xrange(W2): #out indices
+                  j_from=j*stride #x_pad indices
+                  j_to=j_from+WW
+                  out[im,f,i,j]=np.sum(w[f,:,:,:]* x_pad[im,:, i_from:i_to,j_from:j_to])+b[f]
+
 
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
-  cache = (x, w, b, conv_param)
+  cache = (x, w, b, conv_param,x_pad)
   return out, cache
 
 
 def conv_backward_naive(dout, cache):
-  """
-  A naive implementation of the backward pass for a convolutional layer.
+    """
+    A naive implementation of the backward pass for a convolutional layer.
 
-  Inputs:
-  - dout: Upstream derivatives.
-  - cache: A tuple of (x, w, b, conv_param) as in conv_forward_naive
+    Inputs:
+    - dout: Upstream derivatives.
+    - cache: A tuple of (x, w, b, conv_param) as in conv_forward_naive
 
-  Returns a tuple of:
-  - dx: Gradient with respect to x
-  - dw: Gradient with respect to w
-  - db: Gradient with respect to b
-  """
-  dx, dw, db = None, None, None
-  #############################################################################
-  # TODO: Implement the convolutional backward pass.                          #
-  #############################################################################
-  pass
-  #############################################################################
-  #                             END OF YOUR CODE                              #
-  #############################################################################
-  return dx, dw, db
+    Returns a tuple of:
+    - dx: Gradient with respect to x
+    - dw: Gradient with respect to w
+    - db: Gradient with respect to b
+    """
+    dx, dw, db = None, None, None
+    x,w,b,conv_param,x_pad=cache
+    #############################################################################
+    # TODO: Implement the convolutional backward pass.                          #
+    #############################################################################
+    pad=conv_param['pad']
+    stride=conv_param['stride']
+    _,C,HH,WW=w.shape
+    N,F,H2,W2=dout.shape
+
+    dx_pad=np.zeros(x_pad.shape)
+    dw=np.zeros(w.shape)
+    for im in xrange(N):
+        for f in xrange(F):
+            for i in xrange(H2): #dout indices
+                i_from=i*stride #x_pad indices
+                i_to=i_from+HH
+                for j in xrange(W2): #dout indices
+                    j_from=j*stride #x_pad indices
+                    j_to=j_from+WW
+                    dx_pad[im,:,i_from:i_to,j_from:j_to]+= w[f,:]*dout[im,f,i,j]
+                    dw[f,:,:,:]+= x_pad[im,:, i_from:i_to,j_from:j_to]*dout[im,f,i,j]
+    dx=dx_pad[:,:,pad:-pad,pad:-pad]
+    db=np.sum(dout,(0,2,3))
+    #############################################################################
+    #                             END OF YOUR CODE                              #
+    #############################################################################
+    return dx, dw, db
 
 
 def max_pool_forward_naive(x, pool_param):
@@ -432,7 +455,26 @@ def max_pool_forward_naive(x, pool_param):
   #############################################################################
   # TODO: Implement the max pooling forward pass                              #
   #############################################################################
-  pass
+  HH=pool_param['pool_height']
+  WW=pool_param['pool_width']
+  stride=pool_param['stride']
+
+  N,C,H,W=x.shape
+
+  assert ((H-HH) % stride == 0)
+  assert ((W-WW) % stride == 0)
+  H2=(H-HH)/stride+1
+  W2=(W-WW)/stride+1
+  out=np.zeros((N,C,H2,W2))
+  for im in xrange(N):
+      for c in xrange(C):
+          for i in xrange(H2):
+              i_from=i*stride #x_pad indices
+              i_to=i_from+HH
+              for j in xrange(H2):
+                  j_from=j*stride #x_pad indices
+                  j_to=j_from+WW
+                  out[im,c,i,j]=np.max(x[im,c,i_from:i_to,j_from:j_to])
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -451,11 +493,34 @@ def max_pool_backward_naive(dout, cache):
   Returns:
   - dx: Gradient with respect to x
   """
-  dx = None
+
+  x,pool_param=cache
+  dx = np.zeros(x.shape)
   #############################################################################
   # TODO: Implement the max pooling backward pass                             #
   #############################################################################
-  pass
+  HH=pool_param['pool_height']
+  WW=pool_param['pool_width']
+  stride=pool_param['stride']
+
+  N,C,H,W=x.shape
+
+  H2=(H-HH)/stride+1
+  W2=(W-WW)/stride+1
+  out=np.zeros((N,C,H2,W2))
+  for im in xrange(N):
+      for c in xrange(C):
+          for i in xrange(H2):
+              i_from=i*stride #x_pad indices
+              i_to=i_from+HH
+              for j in xrange(W2):
+                  j_from=j*stride #x_pad indices
+                  j_to=j_from+WW
+                  a=x[im,c,i_from:i_to,j_from:j_to]
+                  index_ravel=np.argmax(a)
+                  i_max,j_max=np.unravel_index(index_ravel,(HH,WW))
+                  dx[im,c,i_max+i_from,j_max+j_from]=dout[im,c,i,j]
+
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
