@@ -198,19 +198,26 @@ class FullyConnectedNet(object):
         output=hidden_dims[i]
         w=np.random.randn(input,output)*weight_scale
         b=np.zeros(output)
+        gamma=np.ones(output)
+        beta=np.zeros(output)
         w_name= "W%d" % i
         b_name= "b%d" % i
         self.params[w_name]=w
         self.params[b_name]=b
+        if self.use_batchnorm:
+            beta_name= "beta%d" % i
+            gamma_name= "gamma%d" % i
+            self.params[beta_name]=beta
+            self.params[gamma_name]=gamma
         #{affine - [batch norm] - relu - [dropout]} x (L - 1) - affine - softmax
         #print w.shape
         input=output
+    #OUTPUT LAYER
     w=np.random.randn(input,num_classes)*weight_scale
     b=np.zeros(num_classes)
     w_name= "W%d" % (self.num_layers-1)
     b_name= "b%d" % (self.num_layers-1)
     #print w.shape
-
     self.params[w_name]=w
     self.params[b_name]=b
 
@@ -273,6 +280,7 @@ class FullyConnectedNet(object):
     ############################################################################
     input=X
     affine_cache=[]
+    bn_cache=[]
     relu_cache=[]
     for i in xrange(self.num_layers-1):
         w_name= "W%d" % i
@@ -281,7 +289,18 @@ class FullyConnectedNet(object):
         b=self.params[b_name]
         net_output,cache=affine_forward(input,w,b)
         affine_cache.append(cache)
+
+        if self.use_batchnorm:
+            beta_name= "beta%d" % i
+            gamma_name= "gamma%d" % i
+            beta=self.params[beta_name]
+            gamma=self.params[gamma_name]
+            net_output,cache=batchnorm_forward(net_output,gamma,beta,self.bn_params[i])
+            #print self.bn_params[i]
+            #print self.bn_params[i]
+            bn_cache.append(cache)
         output,cache=relu_forward(net_output)
+
         relu_cache.append(cache)
         input=output
     w_name= "W%d" % (self.num_layers-1)
@@ -314,6 +333,7 @@ class FullyConnectedNet(object):
     # of 0.5 to simplify the expression for the gradient.                      #
     ############################################################################
     loss,dout=softmax_loss(scores,y)
+    # regularization
     sum_w=0
     for i in xrange(self.num_layers):
         w_name= "W%d" % i
@@ -322,7 +342,8 @@ class FullyConnectedNet(object):
 
     reg=self.reg
     loss+=reg*0.5*sum_w
-
+    # error
+    # last layer
     cache=affine_cache[-1]
     dout,dw,db=affine_backward(dout,cache)
     w_name= "W%d" % (self.num_layers-1)
@@ -333,13 +354,21 @@ class FullyConnectedNet(object):
     for i in reversed(xrange(self.num_layers-1)):
         cache=relu_cache[i]
         dout=relu_backward(dout,cache)
+        if self.use_batchnorm:
+            cache=bn_cache[i]
+            dout,dgamma,dbeta=batchnorm_backward_alt(dout,cache)
+            beta_name= "beta%d" % i
+            gamma_name= "gamma%d" % i
+            grads[gamma_name]=dgamma
+            grads[beta_name]=dbeta
+
         cache=affine_cache[i]
         dout,dw,db=affine_backward(dout,cache)
-
         w_name= "W%d" % i
         b_name= "b%d" % i
         grads[w_name]=dw+reg*self.params[w_name]
         grads[b_name]=db
+
 
     ############################################################################
     #                             END OF YOUR CODE                             #
