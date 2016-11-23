@@ -296,6 +296,7 @@ def spatial_batchnorm_forward(x, gamma, beta, bn_param):
   - cache: Values needed for the backward pass
   """
   out, cache = None, None
+  (N, C, H, W) = x.shape
   mode = bn_param['mode']
   eps = bn_param.get('eps', 1e-5)
   momentum = bn_param.get('momentum', 0.9)
@@ -309,9 +310,10 @@ def spatial_batchnorm_forward(x, gamma, beta, bn_param):
   # version of batch normalization defined above. Your implementation should  #
   # be very short; ours is less than five lines.                              #
   #############################################################################
-  (N, C, H, W) = x.shape
-  x_c=x.swapaxes(1,3).reshape(N*H*W,C)
+
+  x_c=x.swapaxes(1,3).reshape(N*W*H,C)
   out,cache=batchnorm_forward(x_c,gamma,beta,bn_param)
+  out=out.reshape(N,W,H,C).swapaxes(1,3)
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -341,8 +343,10 @@ def spatial_batchnorm_backward(dout, cache):
   # version of batch normalization defined above. Your implementation should  #
   # be very short; ours is less than five lines.                              #
   #############################################################################
+  N,C,H,W=dout.shape
+  dout=dout.swapaxes(1,3).reshape(N*W*H,C)
   dx, dgamma, dbeta =batchnorm_backward(dout,cache)
-
+  dx=dx.reshape(N,W,H,C).swapaxes(1,3)
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
