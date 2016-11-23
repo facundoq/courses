@@ -198,7 +198,7 @@ class FullyConnectedNet(object):
         output=hidden_dims[i]
         w=np.random.randn(input,output)*weight_scale
         b=np.zeros(output)
-        gamma=np.ones(output)
+        gamma=np.zeros(output)
         beta=np.zeros(output)
         w_name= "W%d" % i
         b_name= "b%d" % i
@@ -282,6 +282,7 @@ class FullyConnectedNet(object):
     affine_cache=[]
     bn_cache=[]
     relu_cache=[]
+    dropout_cache=[]
     for i in xrange(self.num_layers-1):
         w_name= "W%d" % i
         b_name= "b%d" % i
@@ -300,8 +301,12 @@ class FullyConnectedNet(object):
             #print self.bn_params[i]
             bn_cache.append(cache)
         output,cache=relu_forward(net_output)
-
         relu_cache.append(cache)
+        if self.use_dropout:
+          output,cache=dropout_forward(output,self.dropout_param)
+          dropout_cache.append(cache)
+
+
         input=output
     w_name= "W%d" % (self.num_layers-1)
     b_name= "b%d" % (self.num_layers-1)
@@ -352,6 +357,10 @@ class FullyConnectedNet(object):
     grads[b_name]=db
 
     for i in reversed(xrange(self.num_layers-1)):
+        if self.use_dropout:
+          cache=dropout_cache[i]
+          dout=dropout_backward(dout,cache)
+
         cache=relu_cache[i]
         dout=relu_backward(dout,cache)
         if self.use_batchnorm:
