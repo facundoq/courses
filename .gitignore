@@ -87,3 +87,7 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+cs231/assignment3/cs231n/datasets/coco_captioning/
+cs231/assignment3/cs231n/datasets/tiny-imagenet-100-A/
+
