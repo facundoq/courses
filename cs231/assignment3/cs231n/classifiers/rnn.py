@@ -143,7 +143,7 @@ class CaptioningRNN(object):
     if self.cell_type == 'rnn':
         h, cache_rnn = rnn_forward(x, h0, Wx, Wh, b)
     elif self.cell_type == 'lstm':
-        h, cache_rnn = lstm_forward(x, h0, Wx, Wh, b)
+      h, cache_rnn = lstm_forward(x, h0, Wx, Wh, b)
     else:
         raise ValueError('%s not implemented' % (self.cell_type))
 
@@ -157,14 +157,13 @@ class CaptioningRNN(object):
 
     if self.cell_type == 'rnn':
         dx_rnn, dh0, dWx, dWh, db = rnn_backward(dh,cache_rnn)
-        grads['Wx']=dWx
-        grads['Wh']=dWh
-        grads['b']=db
     elif self.cell_type == 'lstm':
-        h, cache_rnn = lstm_backward(dh,cache_rnn)
-        # TODO
+        dx_rnn, dh0, dWx, dWh, db = lstm_backward(dh,cache_rnn)
     else:
         raise ValueError('%s not implemented' % (self.cell_type))
+    grads['Wx']=dWx
+    grads['Wh']=dWh
+    grads['b']=db
 
     dx_proj,dW_proj,db_proj=affine_backward(dh0,cache_affine)
 
@@ -239,7 +238,8 @@ class CaptioningRNN(object):
     # h0 = np.dot(features, W_proj) + b_proj
     h0,cache_affine=affine_forward(features,W_proj,b_proj)
     N,D=features.shape
-
+    H,_=W_vocab.shape
+    c=np.zeros((N, H))
     word= self._start*np.ones((N,1),dtype=int)
     i=0
     h=h0
@@ -251,9 +251,10 @@ class CaptioningRNN(object):
       if self.cell_type == 'rnn':
         h, cache_rnn = rnn_step_forward(x, h, Wx, Wh, b)
       elif self.cell_type == 'lstm':
-        h, cache_rnn = lstm_forward(x, h0, Wx, Wh, b)
+        h,c, cache_rnn = lstm_step_forward(x, h,c, Wx, Wh, b)
       else:
           raise ValueError('%s not implemented' % (self.cell_type))
+
       scores,cache_temporal=temporal_affine_forward(h[:,np.newaxis,:],W_vocab, b_vocab)
       probs=softmax(scores)
       word=np.argmax(probs,axis=1)
