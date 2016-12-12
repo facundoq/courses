@@ -1,0 +1,3 @@
+/data/dev/courses/gpucuda/p2/src/cm/CMakeFiles/edit_cache.dir
+/data/dev/courses/gpucuda/p2/src/cm/CMakeFiles/rebuild_cache.dir
+/data/dev/courses/gpucuda/p2/src/cm/CMakeFiles/HW2.dir
