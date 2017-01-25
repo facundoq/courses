@@ -1,0 +1,15 @@
+﻿Resilient Backpropagation neural network question
+
+This is a follow-on question to this post. For a given neuron, I'm unclear as to how to take a partial derivative of its error and the partial derivative of it's weight.
+
+Working from this web page, it's clear how the propogation works (although I'm dealing with Resilient Propagation). For a Feedforward Neural Network, we have to 1) while moving forwards through the neural net, trigger neurons, 2) from the output layer neurons, calculate a total error. Then 3) moving backwards, propogate that error by each weight in a neuron, then 4) coming forwards again, update the weights in each neuron.
+
+Precisely though, these are the things I don't understand.
+
+A) For each neuron, how do you calculate the partial derivative (definition) of the error over the partial derivative of the weight? My confusion is that, in calculus, a partial derivative is computed in terms of an n variable function. I'm sort of understanding ldog and Bayer's answers in this post. And I even understnad the chain rule. But it doesn't gel when I think, precisely, of how to apply it to the results of a i) linear combiner and ii) sigmoid activation function.
+
+B) Using the Resilient propogation approach, how would you change the bias in a given neuron ? Or is there no bias or threshold in a NN using Resilient Propagation training?
+
+C) How do you propagate a total error if there are two or more output neurons ? Does the total-error * neuron weight happen for each output neuron value?
+
+Thanks

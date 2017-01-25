@@ -1,8 +1,9 @@
 #include <algorithm>
 #include <cassert>
+#include <stdio.h>
 
 void referenceCalculation(const float* const h_logLuminance, unsigned int* const h_cdf,
-                          const size_t numRows, const size_t numCols, const size_t numBins, 
+                          const size_t numRows, const size_t numCols, const size_t numBins,
 						  float &logLumMin, float &logLumMax)
 {
   logLumMin = h_logLuminance[0];
@@ -10,11 +11,17 @@ void referenceCalculation(const float* const h_logLuminance, unsigned int* const
 
   //Step 1
   //first we find the minimum and maximum across the entire image
-  for (size_t i = 1; i < numCols * numRows; ++i) {
+  size_t n =numCols * numRows;
+  //n=80000;
+
+  for (size_t i = 1; i < n; ++i) {
     logLumMin = std::min(h_logLuminance[i], logLumMin);
     logLumMax = std::max(h_logLuminance[i], logLumMax);
+//    if (h_logLuminance[i]>2){
+//    	//printf("%d>2\n",i);
+//    }
   }
-
+  //printf(" Reference min %f, max %f\n",logLumMin,logLumMax);
   //Step 2
   float logLumRange = logLumMax - logLumMin;
 
@@ -29,7 +36,11 @@ void referenceCalculation(const float* const h_logLuminance, unsigned int* const
     unsigned int bin = std::min(static_cast<unsigned int>(numBins - 1),
                            static_cast<unsigned int>((h_logLuminance[i] - logLumMin) / logLumRange * numBins));
     histo[bin]++;
-  }
+  } 
+//  for (size_t i=0;i<numBins;i++){
+//  		printf("%d,",histo[i]);
+//  	}
+//  	printf("\n");
 
   //Step 4
   //finally we perform and exclusive scan (prefix sum)
@@ -37,7 +48,8 @@ void referenceCalculation(const float* const h_logLuminance, unsigned int* const
   h_cdf[0] = 0;
   for (size_t i = 1; i < numBins; ++i) {
     h_cdf[i] = h_cdf[i - 1] + histo[i - 1];
+//    printf("%d,",h_cdf[i]);
   }
-
+//  printf("\n");
   delete[] histo;
 }

@@ -102,11 +102,11 @@ int main(int argc, char **argv) {
 
   //check results and output the tone-mapped image
   postProcess(output_file, numRows, numCols, min_logLum, max_logLum);
-
-  for (size_t i = 1; i < numCols * numRows; ++i) {
-	min_logLum = std::min(h_luminance[i], min_logLum);
-    max_logLum = std::max(h_luminance[i], max_logLum);
-  }
+//
+//  for (size_t i = 1; i < numCols * numRows; ++i) {
+//	min_logLum = std::min(h_luminance[i], min_logLum);
+//    max_logLum = std::max(h_luminance[i], max_logLum);
+//  }
 
   referenceCalculation(h_luminance, h_cdf, numRows, numCols, numBins, min_logLum, max_logLum);
 
