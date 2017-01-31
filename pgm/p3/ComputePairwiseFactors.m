@@ -1,4 +1,4 @@
-function factors = ComputePairwiseFactors (images, pairwiseModel, K)
+    function factors = ComputePairwiseFactors (images, pairwiseModel, K)
 % This function computes the pairwise factors for one word and uses the
 % given pairwise model to set the factor values.
 %

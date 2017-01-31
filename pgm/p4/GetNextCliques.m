@@ -16,6 +16,7 @@
 %   for loop over i and an inner for loop over j, breaking when you find a 
 %   ready pair of cliques, you will get the right answer.
 %
+
 %   If no such cliques exist, returns i = j = 0.
 %
 %   See also CLIQUETREECALIBRATE
@@ -33,7 +34,51 @@ j = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+N=size(messages,1);
+edges=P.edges;
 
+for from=1:N
+    [messages_to_receive,messages_to_send]=remaining_messages(from,messages,edges);
+    
+    if ~((messages_to_receive<=1) && (messages_to_send>0))
+        continue;% need to receive all messages except maybe one from the "to" clique
+    end
+%         k
+%         edges(k,:)
+%         edges(:,k)
+    for to=1:N
+        %
+        if ~(edges(from,to) && isempty(messages(from,to).var)) 
+            continue; % if message has already been sent do nothing
+        end
+        if (messages_to_receive==1 && ~(isempty(messages(to,from).var)))
+            continue; % if the remaining message is not from clique "to" do nothing
+        end
+        i=from;
+        j=to;
+        return;
+    end
+end
 
+end
 
-return;
+%counts how many messages those clique "clique" still needs to send or receive
+function [messages_to_receive,messages_to_send]=remaining_messages(clique,messages,edges)
+N=size(messages,1); 
+
+messages_to_receive=0;
+messages_to_send=0;
+for i=1:N
+    if edges(i,clique) 
+        if isempty(messages(i,clique).var)
+            messages_to_receive=messages_to_receive+1;
+%             fprintf('Need to recv message from %d to %d\n',i,clique);
+        end
+        if isempty(messages(clique,i).var)
+%             fprintf('Need to send message from %d to %d\n',clique,i);
+            messages_to_send=messages_to_send+1;
+        end
+    end
+end
+
+end

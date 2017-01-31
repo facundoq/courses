@@ -669,13 +669,14 @@ function [email,ch,signature,auxstring] = getChallenge(email, part)
   str = urlread(challenge_url(), 'post', {'email_address', email, 'assignment_part_sid', [homework_id() '-' num2str(part)], 'response_encoding', 'delim'});
 
   str = strtrim(str);
+  str
   r = struct;
   while(numel(str) > 0)
     [f, str] = strtok (str, '|');
     [v, str] = strtok (str, '|');
     r = setfield(r, f, v);
   end
-
+  
   email = getfield(r, 'email_address');
   ch = getfield(r, 'challenge_key');
   signature = getfield(r, 'state');

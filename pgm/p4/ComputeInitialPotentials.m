@@ -39,6 +39,21 @@ P.edges = zeros(N);
 % Print out C to get a better understanding of its structure.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+P.edges=C.edges;
+factors=length(C.factorList);
+assigned=zeros(1,factors);
+for i=1:N
+    %P.cliqueList(i).var = C.nodes{i};
+    clique_factor=empty_factor();
+    for j=1:factors
+        if set_inclusion(C.factorList(j).var,C.nodes{i}) && ~assigned(j)
+            clique_factor=FactorProduct(clique_factor,C.factorList(j));
+            assigned(j)=true;
+        end
+    end
+    P.cliqueList(i)=SortFactorVars(clique_factor);
+end
+
 
 
 end
