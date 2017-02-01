@@ -17,9 +17,10 @@
 % Copyright (C) Daphne Koller, Stanford University, 2012
 
 function [i, j] = NaiveGetNextClusters(P, m)
-
-    i = size(P.clusterList,1);
-    j = size(P.clusterList,1);
+    
+%     n = size(P.clusterList,1);
+%     i = size(P.clusterList,1);
+%     j = size(P.clusterList,1);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % YOUR CODE HERE
@@ -27,7 +28,11 @@ function [i, j] = NaiveGetNextClusters(P, m)
     % The 'find' function may be useful
     %
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+    [messages_from,messages_to]=find(P.edges==1);
+    messages=length(messages_from);
+    message_index=mod(m,messages)+1;
+    i=messages_from(message_index);
+    j=messages_to(message_index);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 end

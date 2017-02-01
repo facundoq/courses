@@ -33,7 +33,42 @@ end;
 % YOUR CODE HERE
 % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+k=length(F);
+variables=unique([F.var]);
+n=length(variables);
 
+P.clusterList = F;
+
+P.edges = zeros(k,k);
+%indices=[];
+
+%     This is the actual way to generate the Bethe cluster graph, but it
+%     would need a graph with k+n nodes, which is not expected by the rest
+%     of the code.
+%     A way to fake it is to consider consider "columns" of the matrix as
+%     variables and rows as factors, and so all factors f that use
+%     variable i have P.edges(f,i)=1.
+    for i=1:k
+    for var=F(i).var 
+        if (var~=i)
+            P.edges(i,var)=1;
+            P.edges(var,i)=1;
+        end
+    end
+    end
+
+% % Another way to implement this is to connect factors that share variables
+% for i=1:k
+%     for j=i+1:k
+%         if ~isempty(intersect(F(i).var,F(j).var))
+%             P.edges(i,j)=1;
+%             P.edges(j,i)=1;
+%         end
+%     end
+% end
+
+
+end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

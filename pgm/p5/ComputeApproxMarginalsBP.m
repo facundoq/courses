@@ -46,7 +46,10 @@ function M = ComputeApproxMarginalsBP(F,E)
         % which is defined at the bottom of this file.  Read through it
         % to make sure you understand its functionality.
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+        var=N(i);
+        p=P.clusterList(FindPotentialWithVariable(P,var));
+        M(i)=FactorMarginalization(p,setdiff(p.var,var));
+        M(i)=normalize_factor(M(i));
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     end
 

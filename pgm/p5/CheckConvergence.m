@@ -23,8 +23,15 @@ thresh = 1.0e-6;
 % YOUR CODE HERE
 % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
+converged=true;
+for i=1:size(mNew,1)
+    for j=1:size(mNew,2)
+        if abs(mNew(i,j).val-mOld(i,j).val)>thresh
+           converged=false;
+           break;
+        end
+    end
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
