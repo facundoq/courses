@@ -27,9 +27,8 @@ for i = 1:size(E, 1),
     for j = 1:length(F),
 		  % Does factor contain variable?
         indx = find(F(j).var == v);
-
         if (~isempty(indx)),
-        
+            %fprintf('Factor %d: set to 0 val if val(%d)!=%d\n',j,v,x);
 		  	   % Check validity of evidence
             if (x > F(j).card(indx) || x < 0 ),
                 error(['Invalid evidence, X_', int2str(v), ' = ', int2str(x)]);

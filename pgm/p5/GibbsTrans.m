@@ -10,6 +10,7 @@
 
 function A = GibbsTrans(A, G, F)
 
+
 for i = 1:length(G.names)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % YOUR CODE HERE
@@ -22,6 +23,10 @@ for i = 1:length(G.names)
     % Also, note that randsample() requires arguments in raw probability space
     % be sure that the arguments you pass to it meet that criteria
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    distribution=BlockLogDistribution(i,G,F,A);
+    distribution=exp(distribution);
+    distribution=distribution/sum(distribution);
+    A(i)=randsample(G.card(i),1,true,distribution);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end

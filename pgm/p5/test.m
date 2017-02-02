@@ -10,7 +10,7 @@ function test()
   basicTestOnly = true;
 
   partNames = validParts();
-  partId = promptPart();
+  partId = 7;%promptPart();
 
   len = length(partNames);
   partNamesAlligned = char( partNames );

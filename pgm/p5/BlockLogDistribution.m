@@ -54,10 +54,41 @@ LogBS = zeros(1, d);
 % Also you should have only ONE for-loop, as for-loops are VERY slow in matlab
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+variable_factors=get_variable_factors(G.var2factors,F,V);
+all_variables=(1:length(A))';
+for i=1:d
+    assignment=A;
+    assignment(V)=i;
+    r=0;
+    evidence=[all_variables,assignment'];
+    fe=ObserveEvidence(variable_factors,evidence);
+    for j=1:length(fe)
+          v=fe(j).val;
+          r=r+log(v(v~=0));
+    end
+    LogBS(i)=r;
+end
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Re-normalize to prevent underflow when you move back to probability space
 LogBS = LogBS - min(LogBS);
 
 
+end
 
+function variable_factors=get_variable_factors(var2factors,factors,variable_indices)
+    factors_containing_variables=var2factors{variable_indices};
+    variable_factors=factors(unique(factors_containing_variables));
+end
+
+% function variable_indices=get_variable_indices(all_names,variable_names)
+%     n=length(variable_names);
+%     variable_indices=zeros(1,n);
+%     for i=1:n
+%         a=strcmp(all_names,variable_names{i});
+%         variable_indices(i)=find(a);
+%     end
+% end
