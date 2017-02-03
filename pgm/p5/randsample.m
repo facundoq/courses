@@ -36,7 +36,7 @@ function [v] = randsample(vals,numSamp,replace,weightIncrements)
   
   %now do the sampling
   v = [];
-  probs = rand(numSamp,1);
+  probs = rand2(numSamp,1);
   for i=1:numSamp
     curInd = find((weights(1:end-1)<=probs(i))&(weights(2:end)>=probs(i)));
     v(end+1)=vals(curInd);
@@ -45,8 +45,8 @@ function [v] = randsample(vals,numSamp,replace,weightIncrements)
       weightIncrements(curInd)=[];
       weightIncrements = weightIncrements(:)/sum(weightIncrements(:));
       weights = zeros(size(weightIncrements));
-      for i = 2:length(weightIncrements)
-        weights(i) = weightIncrements(i)+weights(i-1);
+      for j = 2:length(weightIncrements)
+        weights(j) = weightIncrements(j)+weights(j-1);
       end
     end
   end

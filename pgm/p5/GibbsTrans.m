@@ -26,7 +26,8 @@ for i = 1:length(G.names)
     distribution=BlockLogDistribution(i,G,F,A);
     distribution=exp(distribution);
     distribution=distribution/sum(distribution);
+    %distribution
     A(i)=randsample(G.card(i),1,true,distribution);
-
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end

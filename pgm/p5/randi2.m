@@ -1,6 +1,6 @@
 % Copyright (C) Daphne Koller, Stanford University, 2012
 
-function [num mv] = randi(arg1,arg2,arg3)
+function [num mv] = randi2(arg1,arg2,arg3)
 
 num = -1;
 persistent x_i;
