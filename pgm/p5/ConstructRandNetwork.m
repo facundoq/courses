@@ -9,7 +9,7 @@
 % Copyright (C) Daphne Koller, Stanford University, 2012
 
 function [toy_network, toy_factors] = ConstructRandNetwork(on_diag_weight, off_diag_weight)
-rand('seed',1);
+rand2('seed',1);
 n = 4;  % square length
 k = 2;  % sub-square length
 V = 1:n*n;
@@ -38,7 +38,7 @@ for i = 1:length(V)
     singleton_factors(i).var = i;
     singleton_factors(i).card = 2;
     if i <= length(V) / 2
-        curval = rand(1,2);
+        curval = rand2(1,2);
         singleton_factors(i).val = curval/sum(curval);
     else
         singleton_factors(i).val = [0.6, 0.4];

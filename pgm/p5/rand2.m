@@ -8,7 +8,7 @@ if(nargin>0&&ischar(arg1))
   if(nargin==1)
     arg2=1;
   end
-  randi(arg1,arg2);
+  randi2(arg1,arg2);
   val=0;
 else
   if(nargin==0)

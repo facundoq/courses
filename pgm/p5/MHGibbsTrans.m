@@ -18,6 +18,6 @@ A_prop = GibbsTrans(A, G, F);
 p_acceptance = 1.0;
 
 % Accept or reject proposal
-if rand() < p_acceptance
+if rand2() < p_acceptance
     A = A_prop;
 end

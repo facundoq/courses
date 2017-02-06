@@ -103,11 +103,11 @@ function test(partId)
         Output.t7{iter} = GibbsTrans(exampleINPUT.t7a1{iter}, ...
             exampleINPUT.t7a2{iter}, exampleINPUT.t7a3{iter});
 
-        %resultIter = isEqualTol(Output.t7{iter}, exampleOUTPUT.t7{iter}, ...
-            %sprintf('Output.t7{%d}', iter) );
-        %fprintf('iter %d) ---- %s\n\n', iter, bool2ans(resultIter));
-        fprintf('Ignoring test GibbsTrans\n');
-        %result = result && resultIter;
+        resultIter = isEqualTol(Output.t7{iter}, exampleOUTPUT.t7{iter}, ...
+        sprintf('Output.t7{%d}', iter) );
+        fprintf('iter %d) ---- %s\n\n', iter, bool2ans(resultIter));
+        %fprintf('Ignoring test GibbsTrans\n');
+        result = result && resultIter;
       end
 
     case 8 % MCMCInference

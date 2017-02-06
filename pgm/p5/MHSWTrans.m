@@ -19,7 +19,7 @@ q_list = G.q_list;
 q_keep_indx = find(A(q_list(:, 1)) == A(q_list(:, 2)));
 q_list = q_list(q_keep_indx, :);
 % Select edges at random based on q_list
-selected_edges_q_list_indx = find(q_list(:, 3) > rand(size(q_list,1), 1));
+selected_edges_q_list_indx = find(q_list(:, 3) > rand2(size(q_list,1), 1));
 selected_edges = q_list(selected_edges_q_list_indx, 1:2);
 % Compute connected components over selected edges
 SelEdgeMat = sparse([selected_edges(:,1)'; selected_edges(:,2)'],...
@@ -31,7 +31,7 @@ num_cc = length(cc_sizes);
 
 
 % Select a connected component (the book calls this Y)
-selected_cc = ceil(rand() * num_cc);
+selected_cc = ceil(rand2() * num_cc);
 selected_vars = find(var2comp == selected_cc);
 % Check that the dimensions are all the same and they have the same current assignment
 assert(length(unique(G.card(selected_vars))) == 1);
@@ -47,7 +47,7 @@ if variant == 1
     % Specify the log of the distribution (LogR) from 
     % which a new label for Y is selected for variant 1 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    LogR;
+    LogR=log(ones(1,d)/d);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 elseif variant == 2
@@ -60,7 +60,8 @@ elseif variant == 2
     % before implementing this, one of the generated
     % data structures may be useful in implementing this section
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+    
+    LogR=log( BlockLogDistribution(selected_vars,G,F,A));
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 else
     disp('WARNING: Unrecognized Swendsen-Wang Variant');
@@ -83,7 +84,7 @@ for i = 1:size(G.q_list, 1)  % Iterate through *all* edges, not just the ones we
         if A_prop(u) == new_value && A_prop(v) == new_value
             log_QY_ratio = log_QY_ratio + log(1 - G.q_list(i, 3));
         end
-    end
+        end
 end
 
 p_acceptance = 0.0;
@@ -97,10 +98,21 @@ p_acceptance = 0.0;
 % the acceptance probabilitiy.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+pA_prop=LogProbOfJointAssignment(F,A_prop);
+pA=LogProbOfJointAssignment(F,A);
+r_quotient=LogR(old_value)  - LogR(new_value);
+proposal_quotient=log_QY_ratio + r_quotient;
+pi_quotient=pA_prop-pA;
+p=exp( pi_quotient+ proposal_quotient);
+
+p_acceptance=min(1,p);
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Accept or reject proposal
-if rand() < p_acceptance
+if rand2() < p_acceptance
     %disp('Accepted');
     A = A_prop;
 end

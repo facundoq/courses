@@ -1,6 +1,6 @@
 % Copyright (C) Daphne Koller, Stanford University, 2012
 
-rand('seed', 1);
+rand2('seed', 1);
 
 % Construct the toy network
 [toy_network, toy_factors] = ConstructToyNetwork(0.3, 1);
@@ -10,7 +10,7 @@ toy_evidence = zeros(1, length(toy_network.names));
 
 % Exact Inference
 ExactM = ComputeExactMarginalsBP(toy_factors, toy_evidence, 0)
-figure, VisualizeToyImageMarginals(toy_network, ExactM);
+figure, VisualizeToyImageMarginals(toy_network, ExactM,'c1','t1');
 
 % Comment this in to run Approximate Inference on the toy network
 % Approximate Inference
