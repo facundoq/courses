@@ -4,6 +4,8 @@
 % Test case 1 - a very simple influence diagram in which X1 is a random variable
 % and D is a decision.  The utility U is a function of X1 and D.  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+clear
+clc
 
 X1 = struct('var', [1], 'card', [2], 'val', [7, 3]);
 X1.val = X1.val / sum(X1.val);
@@ -31,6 +33,7 @@ end
 
 % Get EUF...
 euf = CalculateExpectedUtilityFactor(I1);
+PrintFactor(euf)
 % PrintFactor(euf) =>
 % 2	
 % 1	7.300000

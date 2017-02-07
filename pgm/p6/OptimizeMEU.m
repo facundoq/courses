@@ -13,7 +13,9 @@ function [MEU OptimalDecisionRule] = OptimizeMEU( I )
   % We assume I has a single decision node.
   % You may assume that there is a unique optimal decision.
   D = I.DecisionFactors(1);
-
+  
+  %PrintFactor(D);
+  
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   %
   % YOUR CODE HERE...
@@ -24,6 +26,14 @@ function [MEU OptimalDecisionRule] = OptimizeMEU( I )
   %     has no parents.
   % 2.  You may find the Matlab/Octave function setdiff useful.
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
-    
+  EUF = CalculateExpectedUtilityFactor( I );
+  
+  
+  
+  
+  OptimalDecisionRule=D;
+  
+  
+  %MEU=7.500000;max(EUF.val);
 
 end

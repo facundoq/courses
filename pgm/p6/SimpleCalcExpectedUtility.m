@@ -15,14 +15,23 @@ function EU = SimpleCalcExpectedUtility(I)
   % In this function, we assume there is only one utility node.
   F = [I.RandomFactors I.DecisionFactors];
   U = I.UtilityFactors(1);
-  EU = [];
+  
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   %
   % YOUR CODE HERE
   %
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
- 
+  %parents of U
+  non_parent_variables=setdiff( unique([F.var]),U.var);
+  parents_factor=VariableElimination(F,non_parent_variables);
+  final_factor=FactorsProduct(parents_factor);
+  P = FactorProduct(final_factor, U);
+  EU=sum(P.val);
+  
+  %assignments=IndexToAssignment(length(final_factor.val),final_factor.card);
+  
+  %ff_values=GetValueOfAssignment(final_factor,assignments);
+  
   
   
 end
