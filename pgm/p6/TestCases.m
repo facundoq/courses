@@ -32,13 +32,14 @@ end
 % allEU => [7.3000, 3.8000]
 
 % Get EUF...
+fprintf('*************\nEUF\n*************\n');
 euf = CalculateExpectedUtilityFactor(I1);
 PrintFactor(euf)
 % PrintFactor(euf) =>
 % 2	
 % 1	7.300000
 % 2	3.800000
-
+fprintf('*************\n OPTIMIZE \n*************\n');
 [meu optdr] = OptimizeMEU(I1)
 [meu optdr] = OptimizeWithJointUtility(I1)
 [meu optdr] = OptimizeLinearExpectations(I1)

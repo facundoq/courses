@@ -1,6 +1,6 @@
 % Copyright (C) Daphne Koller, Stanford University, 2012
 
-function [MEU OptimalDecisionRule] = OptimizeMEU( I )
+function [MEU OptimalDecisionRule] = OptimizeMEU( I,euf )
 
   % Inputs: An influence diagram I with a single decision node and a single utility node.
   %         I.RandomFactors = list of factors for each random variable.  These are CPDs, with
@@ -25,11 +25,13 @@ function [MEU OptimalDecisionRule] = OptimizeMEU( I )
   %     has no parents.
   % 2.  You may find the Matlab/Octave function setdiff useful.
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
-  euf= CalculateExpectedUtilityFactor( I ); 
+  if nargin==1
+    euf= CalculateExpectedUtilityFactor(I); 
+  end
   D = I.DecisionFactors(1);
   assert(all(sort(D.var)==sort(euf.var)));
   
-%   parent_variables=D.var(2:end);
+% parent_variables=D.var(2:end);
   decision_variable=D.var(1);
   decision_values=D.card(1);
   euf_var1=euf.var(1);
@@ -61,43 +63,7 @@ function [MEU OptimalDecisionRule] = OptimizeMEU( I )
       MEU=MEU+v;
   end
   
-  PrintFactor(odr);
   odr=exchange_variable_order(odr,decision_variable,euf_var1);
-  PrintFactor(odr);
-  %odr=SortFactorVars(odr);
-  %odr.val
   
   OptimalDecisionRule=odr;
-end
-
-
-function f=exchange_variable_order(f,v1,v2)
-    if (v1~=v2)
-        v1_index=find(f.var==v1);
-        v2_index=find(f.var==v2);
-        f=exchange_variable_order_indices(f,v1_index,v2_index);
-    end
-end
-
-function g=exchange_variable_order_indices(f,v1_index,v2_index)
-
-%[sortedVars, order] = sort(F.var);
-%G.var = sortedVars;
-order=1:length(f.var);
-order=swap(order,v1_index,v2_index);
-
-g.var=swap(f.var,v1_index,v2_index);
-g.card=swap(f.card,v1_index,v2_index);
-g.val = zeros(1,numel(f.val));
-
-assignmentsInF = IndexToAssignment(1:numel(f.val), f.card);
-assignmentsInG = assignmentsInF(:,order);
-g.val(AssignmentToIndex(assignmentsInG, g.card)) = f.val;
-
-end
-
-function a=swap(a,i,j)
-    t=a(j);
-    a(j)=a(i);
-    a(i)=t;
 end

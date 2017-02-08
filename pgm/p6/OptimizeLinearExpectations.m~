@@ -26,23 +26,17 @@ function [meu, odr] = OptimizeLinearExpectations( I )
   %
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   n=length(I.UtilityFactors);
-  
-  eufs=repmat(empty_factor(),1,n);
+  meus=zeros(1,n);
+  odrs=repmat(empty_factor(),1,n);
   for i=1:n
       J=I;
       J.UtilityFactors=J.UtilityFactors(i);
-      eufs(i)=CalculateExpectedUtilityFactor(J);
-      
+      EUF=CalculateExpectedUtilityFactor(J);
+      [meus(i), odrs(i)]
   end
-  
-  euf=FactorsSum(eufs);
-  
-  [meu, odr]=OptimizeMEU(I,euf);
-  
-  
-  
-  
-  %[meus(i), odrs(i)];
-  
+  meu=sum(meus);
+  odr=FactorsSum(odrs);
+
+
 
 end

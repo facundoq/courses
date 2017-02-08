@@ -1,6 +1,6 @@
 % Copyright (C) Daphne Koller, Stanford University, 2012
 
-function [MEU OptimalDecisionRule] = OptimizeWithJointUtility( I )
+function [meu, odr] = OptimizeWithJointUtility( I )
   % Inputs: An influence diagram I with a single decision node and one or more utility nodes.
   %         I.RandomFactors = list of factors for each random variable.  These are CPDs, with
   %              the child variable = D.var(1)
@@ -19,6 +19,11 @@ function [MEU OptimalDecisionRule] = OptimizeWithJointUtility( I )
   % YOUR CODE HERE
   %
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  I.UtilityFactors=FactorsSum(I.UtilityFactors);
+  [meu, odr]=OptimizeMEU(I);
+  
+  
+  
 
   
 end
