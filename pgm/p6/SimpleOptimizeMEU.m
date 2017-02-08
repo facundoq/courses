@@ -17,7 +17,17 @@ function [MEU OptimalDecisionRule] = SimpleOptimizeMEU(I)
   %     rule respectively.
   %
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  
+    D1 = D;
+    D2 = D;
+    D2.val = [0 1];
+    AllDs = [D1 D2];
+
+    allEU = zeros(length(AllDs),1);
+    for i=1:length(AllDs)
+      I1.DecisionFactors = AllDs(i);
+      allEU(i) = SimpleCalcExpectedUtility(I1);
+    end
+
   
 end
 

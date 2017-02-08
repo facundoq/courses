@@ -26,6 +26,7 @@ function EUF = CalculateExpectedUtilityFactor( I )
   non_parent_variables=setdiff( unique([F.var]),D.var);
   parents_factor=VariableElimination(F,non_parent_variables);
   EUF =FactorsProduct(parents_factor);
+ 
   
   
 %   for h=1:length(I.RandomFactors)

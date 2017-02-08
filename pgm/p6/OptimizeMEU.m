@@ -12,8 +12,7 @@ function [MEU OptimalDecisionRule] = OptimizeMEU( I )
   
   % We assume I has a single decision node.
   % You may assume that there is a unique optimal decision.
-  D = I.DecisionFactors(1);
-  
+
   %PrintFactor(D);
   
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -26,14 +25,40 @@ function [MEU OptimalDecisionRule] = OptimizeMEU( I )
   %     has no parents.
   % 2.  You may find the Matlab/Octave function setdiff useful.
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
-  EUF = CalculateExpectedUtilityFactor( I );
-  
-  
-  
-  
+  EUF= CalculateExpectedUtilityFactor( I ); 
+  D = I.DecisionFactors(1);
   OptimalDecisionRule=D;
+  if (length(D.var)==1)
+      [MEU i]=max(EUF.val);
+      OptimalDecisionRule.val(:)=0;
+      OptimalDecisionRule.val(i)=1;
+      return
+  end
   
+  parent_assigments=prod(D.card(2:end)); %the decision variable should be the first in the EUF
+  decision_values=D.card(1);
+  indices=[];
+  D.var
+  EUF.var
+  MEU=0;
+  for i=1:parent_assigments
+      from=(i-1)*decision_values+1;
+      to=from+decision_values-1;
+      decision_indices=from:to;
+      assignments=IndexToAssignment(decision_indices,D.card);
+      %assignments=assignments(:,mappingDtoEUF);
+      values=GetValuesOfAssignments(EUF,assignments,D.var);
+      [v, i_max]=max(values);
+      OptimalDecisionRule.val(decision_indices)=0;
+      OptimalDecisionRule.val(i+i_max-1)=1;
+      MEU=MEU+v;
+  end
+  OptimalDecisionRule.val
+  %OptimalDecisionRule=SortFactorVars(OptimalDecisionRule);
+  %OptimalDecisionRule.val
   
   %MEU=7.500000;max(EUF.val);
 
 end
+
+
