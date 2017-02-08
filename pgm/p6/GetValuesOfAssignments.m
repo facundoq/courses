@@ -4,7 +4,7 @@ n=size(A,1);
 values=zeros(1,n);
  
 for i=1:n
-        values(i)=GetValueOfAssignment(F,A(i,:),v0);
+        values(i)=GetValueOfAssignment(F,A(i,:));
 end
 
 % 
