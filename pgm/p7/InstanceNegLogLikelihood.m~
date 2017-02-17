@@ -63,25 +63,17 @@ function [nll, grad] = InstanceNegLogLikelihood(X, y, theta, modelParams)
     K = modelParams.numHiddenStates;
     char_factors=repmat(EmptyFactorStruct(),1,K);
     bigram_factors=repmat(EmptyFactorStruct(),1,K*K);
-    n=length(y);
-    for i=1:n
-        char_factors(i).var=[i];
-        char_factors(i).card=[K];
-        char_factors(i).val=zeros(1,K);
+    
+    for i=1:K
+        char_factors(i)= ;
     end
     
-    for i=1:n-1
-        bigram_factors(i).var=[i,i+1];
-        bigram_factors(i).card=[K,K];
-        bigram_factors(i).val=zeros(1,K*K);
-    end
     
     
     F= [char_factors bigram_factors];
         
     P = CreateCliqueTree(F);
-    isMax=false;
-    [P, logZ]=CliqueTreeCalibrate(P,isMax);
+    [P, logZ]=CliqueTreeCalibrate(P);
     
     
     reg =0.5*sum(theta.^2)*modelParams.lambda;

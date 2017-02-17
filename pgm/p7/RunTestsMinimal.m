@@ -1,6 +1,8 @@
+clc;
+clear;
 %% Change this to test the different parts of the assignment.
 %% Or, you can comment it out and set it globally from the command line.
-testNum = 2
+testNum = 3
 
 %% Load all the necessary files:
 load('Train1X.mat');
@@ -17,7 +19,7 @@ switch testNum
   case 1
     thetaOpt = LRTrainSGD(Train1X, Train1Y, 0);
     predY = LRPredict(Train1X, thetaOpt);
-    accuracy = LRAccuracy(Train1Y, predY)
+    accuracy = LRAccuracy(Train1Y, predY);
     assert(eq_eps(accuracy, 0.96));
 
   case 2
@@ -27,19 +29,19 @@ switch testNum
 
   case 3
     [~, logZ] = CliqueTreeCalibrate(sampleUncalibratedTree, false);
-    assert(logZ, sampleLogZ, 1e-6);
+    assert(eq_eps(logZ, sampleLogZ));
 
   case 4
-    %% This is wastly inadequate, you should probably test the different
+    %% This is vastly inadequate, you should probably test the different
     %% components of nll computation separately. Unfortunately, we don't
     %% have the problem divided into canonical subtasks. But, you should
     %% probably try to create your own tests for those.
     [nll, ~] = InstanceNegLogLikelihood(sampleX, sampleY, sampleTheta, sampleModelParams);
-    assert(nll, sampleNLL, 1e-6);
+    assert(eq_eps(nll, sampleNLL));
 
   case 5
     [~, grad] = InstanceNegLogLikelihood(sampleX, sampleY, sampleTheta, sampleModelParams);
-    assert(grad, sampleGrad, 1e-6);
+    assert(eq_eps(grad, sampleGrad));
 
 end
 

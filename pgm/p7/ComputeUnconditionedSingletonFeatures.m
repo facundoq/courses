@@ -17,7 +17,6 @@ for st = 1:K
         features(featureIdx).var = v;
         features(featureIdx).assignment = st;
         features(featureIdx).paramIdx = paramVal;
-
     end
 end
 
