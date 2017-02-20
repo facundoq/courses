@@ -19,7 +19,7 @@
 %
 % Copyright (C) Daphne Koller, Stanford Univerity, 2012
 
-function [nll, grad] = InstanceNegLogLikelihood(X, y, theta, modelParams)
+function [nll, grad,theta_count,model_count,reg_grad] = InstanceNegLogLikelihood(X, y, theta, modelParams)
 
     % featureSet is a struct with two fields:
     %    .numParams - the number of parameters in the CRF (this is not numImageFeatures
@@ -45,7 +45,7 @@ function [nll, grad] = InstanceNegLogLikelihood(X, y, theta, modelParams)
     % For the purposes of this assignment, though, you don't
     % have to understand how this code works. (It's complicated.)
     
-    featureSet = GenerateAllFeatures(X, modelParams);
+    feature_set = GenerateAllFeatures(X, modelParams);
 
     % Use the featureSet to calculate nll and grad.
     % This is the main part of the assignment, and it is very tricky - be careful!
@@ -58,41 +58,90 @@ function [nll, grad] = InstanceNegLogLikelihood(X, y, theta, modelParams)
     
     %%%
     % Your code here:
-    
-    F = [];
-    K = modelParams.numHiddenStates;
-    char_factors=repmat(EmptyFactorStruct(),1,K);
-    bigram_factors=repmat(EmptyFactorStruct(),1,K*K);
     n=length(y);
-    for i=1:n
-        char_factors(i).var=[i];
-        char_factors(i).card=[K];
-        char_factors(i).val=zeros(1,K);
-    end
-    
-    for i=1:n-1
-        bigram_factors(i).var=[i,i+1];
-        bigram_factors(i).card=[K,K];
-        bigram_factors(i).val=zeros(1,K*K);
-    end
-    
-    
-    F= [char_factors bigram_factors];
+    features=feature_set.features;
+    K = modelParams.numHiddenStates;
+    lambda=modelParams.lambda;
+    [nll,clique_tree]=calculate_nll(features,K,y,theta,lambda);
         
-    P = CreateCliqueTree(F);
+    %grad reg
+    reg_grad=lambda * theta;
+    theta_count=calculate_theta_count(features,theta,y);
+    model_count=calculate_model_count(features,theta,clique_tree.cliqueList,y);
+    
+    grad=model_count-theta_count+reg_grad;
+    
+end
+
+
+function [nll,P]=calculate_nll(features,K,y,theta,lambda)
+    feature_sum=calculate_feature_sum(features,theta,y);
+    factors=generate_factors(features,theta,K);
+    P = CreateCliqueTree(factors);
+    fprintf('after create\n');
     isMax=false;
     [P, logZ]=CliqueTreeCalibrate(P,isMax);
+    reg =0.5*sum(theta.^2)*lambda;
+    %pyx=theta.^theta_count;
+    nll = - feature_sum +logZ +reg;
+end
+function factors=generate_factors(features,theta,K)
+    fn=length(features);
+    factors=repmat(EmptyFactorStruct(),1,fn);
+    for i=1:fn
+        feature=features(i);
+        f.var=feature.var;
+        f.card=repmat(K,1,length(f.var));
+        f.val=zeros(1,prod(f.card));
+        f=SetValueOfAssignment(f,feature.assignment,theta(feature.paramIdx));
+        f.val=exp(f.val);
+        factors(i)=f;    
+    end
     
-    
-    reg =0.5*sum(theta.^2)*modelParams.lambda;
-    pyx=1;
-    nll = - pyx +logZ +reg;
-    
-    
-    
-    grad = zeros(size(theta));
-    grad=grad+ lambda * theta;
-    
-    
+end
 
+function feature_sum=calculate_feature_sum(features,theta,y)
+
+feature_sum=0;
+for i=1:length(features)
+    feature=features(i);
+    if all(y(feature.var)==feature.assignment)
+        feature_sum=feature_sum+theta(feature.paramIdx);
+    end
+end
+
+end
+
+function theta_count=calculate_theta_count(features,theta,y)
+    theta_count=zeros(size(theta));
+    for i=1:length(features)
+        feature=features(i);
+        if all(y(feature.var)==feature.assignment)
+            theta_count(feature.paramIdx)=theta_count(feature.paramIdx)+1;
+        end
+    end
+end
+
+function model_count=calculate_model_count(features,theta,cliques,y)
+    model_count=zeros(size(theta));
+    
+    for i=1:length(features)
+        f=features(i);
+        
+        for j=1:length(cliques)
+            clique=cliques(j);
+            if all(ismember(f.var,clique.var)) 
+                clique=FactorMarginalization(clique,setdiff(clique.var,f.var));    
+                clique.val=clique.val/ sum(clique.val);
+                p=GetValueOfAssignment(clique,f.assignment,f.var);
+                model_count(f.paramIdx)=model_count(f.paramIdx)+p;
+                break;
+            end
+            
+        end
+        
+        
+    end
+    
+    
 end

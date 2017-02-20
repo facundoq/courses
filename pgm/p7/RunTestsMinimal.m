@@ -2,7 +2,7 @@ clc;
 clear;
 %% Change this to test the different parts of the assignment.
 %% Or, you can comment it out and set it globally from the command line.
-testNum = 3
+testNum = 5
 
 %% Load all the necessary files:
 load('Train1X.mat');
@@ -37,12 +37,26 @@ switch testNum
     %% have the problem divided into canonical subtasks. But, you should
     %% probably try to create your own tests for those.
     [nll, ~] = InstanceNegLogLikelihood(sampleX, sampleY, sampleTheta, sampleModelParams);
-    assert(eq_eps(nll, sampleNLL));
+    assert(eq_eps(nll, sampleNLL),sprintf('Calculated nll: %f, true nll: %f',nll,sampleNLL));
 
   case 5
-    [~, grad] = InstanceNegLogLikelihood(sampleX, sampleY, sampleTheta, sampleModelParams);
-    assert(eq_eps(grad, sampleGrad));
-
+    [~, grad,theta_count,model_count,reg_grad] = InstanceNegLogLikelihood(sampleX, sampleY, sampleTheta, sampleModelParams);
+    
+    cgrad=[grad',sampleGrad'];
+    cmodel=[model_count',sampleModelFeatureCounts'];
+    ctheta=[theta_count',sampleFeatureCounts'];
+    creg=[reg_grad',sampleRegularizationGradient'];
+    
+    
+    fprintf('theta_count: ');
+    assert(eq_eps(theta_count, sampleFeatureCounts),difference_info(theta_count, sampleFeatureCounts));
+    fprintf('ok\nreg: ');
+    assert(eq_eps(reg_grad, sampleRegularizationGradient),difference_info(reg_grad, sampleRegularizationGradient));
+    fprintf('ok\nmodel_count: ');
+    assert(eq_eps_all(model_count, sampleModelFeatureCounts),difference_info(model_count, sampleModelFeatureCounts));
+    fprintf('ok\ngrad: ');
+    assert(eq_eps_all(grad, sampleGrad), difference_info(grad,sampleGrad));
+ 
 end
 
 disp('Test finished successfully!');
