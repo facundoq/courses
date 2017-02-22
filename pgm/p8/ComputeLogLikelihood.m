@@ -16,6 +16,11 @@ function loglikelihood = ComputeLogLikelihood(P, G, dataset)
 %
 % Copyright (C) Daphne Koller, Stanford Univerity, 2012
 
+K = length(P.c);
+if ndims(G)==2
+   G=repmat(G,1,1,K);
+end
+
 N = size(dataset,1); % number of examples
 loglikelihoods = zeros(1,N);
 for i=1:N
@@ -38,7 +43,7 @@ function loglikelihood = ComputeLogLikelihoodSample(P, G, sample)
 K = length(P.c); % number of classes
 class_likelihoods=zeros(1,K);
 for klass=1:K
-    class_likelihoods(klass)=class_loglikelihood(P,G,sample,klass);
+    class_likelihoods(klass)=class_loglikelihood(P,squeeze(G(:,:,klass)),sample,klass);
 end
 
 %loglikelihood=log(sum(exp(class_likelihoods)));
