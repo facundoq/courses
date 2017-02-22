@@ -21,7 +21,8 @@ while(1)
         
         img = ShowPose(pose);
         imshow(img);
-        pause(0.3)
+        
         if (~ishandle(f)) return; end; % quit loop when user closes the figure
     end
+    pause(1)
 end

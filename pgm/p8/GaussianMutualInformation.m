@@ -12,7 +12,6 @@ end
 % I(X, Y) = 1/2 * log( | Sigma_XX | * | Sigma_YY | / | Sigma |)
 % Sigma = [ Sigma_XX, Sigma_XY ; 
 %           Sigma_XY, Sigma_YY ]
-
 Sxx = cov(X);
 Syy = cov(Y);
 S = cov([X,Y]);

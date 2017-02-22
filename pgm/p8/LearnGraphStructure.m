@@ -12,14 +12,23 @@ function [A W] = LearnGraphStructure(dataset)
 
 N = size(dataset,1);
 K = size(dataset,3);
-
-W = zeros(10,10);
+parts=size(dataset,2);
+W = zeros(parts,parts);
 % Compute weight matrix W
 % set the weights following Eq. (14) in PA description
 % you don't have to include M since all entries are scaled by the same M
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE        
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+for i=1:parts
+    for j=(i+1):parts
+        di=squeeze(dataset(:,i,:));
+        dj=squeeze(dataset(:,j,:));
+        W(i,j)= GaussianMutualInformation(di,dj);
+        W(j,i)=W(i,j);
+    end
+end
 
 % Compute maximum spanning tree
 A = MaxSpanningTree(W);

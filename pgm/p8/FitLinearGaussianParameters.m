@@ -14,6 +14,7 @@ function [Beta, sigma] = FitLinearGaussianParameters(X, U)
 M = size(U,1);
 N = size(U,2);
 
+
 % collect expectations and solve the linear system
 % A = [ E[U(1)],      E[U(2)],      ... , E[U(n)],      1     ; 
 %       E[U(1)*U(1)], E[U(2)*U(1)], ... , E[U(n)*U(1)], E[U(1)];
@@ -45,6 +46,7 @@ b=[mean(X); UX/M];
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Beta= a\b;
+
 % then compute sigma according to eq. (11) in PA description
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE

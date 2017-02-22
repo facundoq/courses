@@ -206,9 +206,9 @@ function retval = comparedatarecurse(data1, data2, context, Params)
             'Mismatch : at %s numeric array comparison - abs(data 1 - data 2) > tolerance of %g:\n', ...
             context,ParamsP.NumericTolerance);
              
-        strData1 = num2str(data1, '%.3g');
+        strData1 = num2str(data1, '%.3g ');
         fprintf(ParamsP.fid, '   Found: [ %s ]\n', strData1.');
-        strData2 = num2str(data2, '%.3g');
+        strData2 = num2str(data2, '%.3g ');
         fprintf(ParamsP.fid, 'Expected: [ %s ]\n', strData2.');
               
         if ParamsP.showMinMaxAbsDiff == 1

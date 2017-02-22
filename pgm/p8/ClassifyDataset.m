@@ -14,11 +14,18 @@ function accuracy = ClassifyDataset(dataset, labels, P, G)
 % Copyright (C) Daphne Koller, Stanford Univerity, 2012
 
 N = size(dataset, 1);
-accuracy = 0.0;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicted=zeros(1,N);
+for i=1:N
+    class_l = ComputeClassLikelihoodSample(P, G, squeeze(dataset(i,:,:)));
+    [~, predicted(i)]=max(class_l);
+end
+c= (labels(:,1)==1) +  (labels(:,2)==1)*2;
+
+accuracy=mean(c==predicted');
 
 
 

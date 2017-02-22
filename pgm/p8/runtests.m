@@ -9,7 +9,7 @@ turnOnVisualizations = false;
 constTOL = 1e-2;
 
 
-testPart=3;
+testPart=7;
 
 fprintf('\n Testing %d ...\n', testPart);
 result = true;
