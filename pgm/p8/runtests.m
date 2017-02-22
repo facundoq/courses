@@ -34,7 +34,6 @@ switch testPart
       result = isEqualTol(Output.t3, exampleOUTPUT.t3, 'Output.t3', constTOL);
 
     case 4 % LearnCPDsGivenGraph
-        
       [Output.t4o1 Output.t4o2] = ...
           LearnCPDsGivenGraph(exampleINPUT.t4a1, exampleINPUT.t4a2, exampleINPUT.t4a3);
       result = isEqualTol(Output.t4o1, exampleOUTPUT.t4o1, 'Output.t4o1', constTOL) && ...
