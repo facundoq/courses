@@ -20,4 +20,7 @@ accuracy = 0.0;
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+
+
 fprintf('Accuracy: %.2f\n', accuracy);

@@ -1,4 +1,4 @@
-function [Beta sigma] = FitLinearGaussianParameters(X, U)
+function [Beta, sigma] = FitLinearGaussianParameters(X, U)
 
 % Estimate parameters of the linear Gaussian model:
 % X|U ~ N(Beta(1)*U(1) + ... + Beta(n)*U(n) + Beta(n+1), sigma^2);
@@ -14,9 +14,6 @@ function [Beta sigma] = FitLinearGaussianParameters(X, U)
 M = size(U,1);
 N = size(U,2);
 
-Beta = zeros(N+1,1);
-sigma = 1;
-
 % collect expectations and solve the linear system
 % A = [ E[U(1)],      E[U(2)],      ... , E[U(n)],      1     ; 
 %       E[U(1)*U(1)], E[U(2)*U(1)], ... , E[U(n)*U(1)], E[U(1)];
@@ -27,7 +24,12 @@ sigma = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+a=zeros(N+1,N+1);
+mU=mean(U,1);
+a(1,:)=[mU 1];
+a(2:end,end)=mU';
+UU=U'*U;
+a(2:end,1:end-1)=UU/M;
 
 % B = [ E[X]; E[X*U(1)]; ... ; E[X*U(n)] ]
 
@@ -35,13 +37,24 @@ sigma = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+UX= U'*X;
+b=[mean(X); UX/M];
 
 % solve A*Beta = B
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+Beta= a\b;
 % then compute sigma according to eq. (11) in PA description
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+covU=cov(U);
+betaMatrix=Beta(1:N)*Beta(1:N)';
+
+sigmaU= covU.*betaMatrix;
+sigmaU=sum(sum(sigmaU));
+sigmaX=var(X);
+sigma=sqrt(sigmaX-sigmaU);
+
+%sigma=1.524499;
