@@ -2,7 +2,7 @@
 %
 % Copyright (C) Daphne Koller, Stanford Univerity, 2012
 
-function [P loglikelihood ClassProb] = EM_cluster(poseData, G, InitialClassProb, maxIter)
+function [P, loglikelihood, soft_labels] = EM_cluster(poseData, G, InitialClassProb, maxIter)
 
 % INPUTS
 % poseData: N x 10 x 3 matrix, where N is number of poses;
@@ -22,17 +22,17 @@ function [P loglikelihood ClassProb] = EM_cluster(poseData, G, InitialClassProb,
 %   example i belongs to class j
 
 % Initialize variables
-N = size(poseData, 1);
+[N,parts,d] = size(poseData);
 K = size(InitialClassProb, 2);
 
-ClassProb = InitialClassProb;
+soft_labels = InitialClassProb;
 
 loglikelihood = zeros(maxIter,1);
 
-P.c = [];
-P.clg.sigma_x = [];
-P.clg.sigma_y = [];
-P.clg.sigma_angle = [];
+% P.c = [];
+% P.clg.sigma_x = [];
+% P.clg.sigma_y = [];
+% P.clg.sigma_angle = [];
 
 % EM algorithm
 for iter=1:maxIter
@@ -45,12 +45,13 @@ for iter=1:maxIter
   %
   % Hint: This part should be similar to your work from PA8
   
-  P.c = zeros(1,K);
-  
+%   P.c = zeros(1,K);
+
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % YOUR CODE HERE
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  
+  [P ] = LearnCPDsGivenGraph(poseData, G, soft_labels);
+  P
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
   % E-STEP to re-estimate ClassProb using the new parameters
@@ -68,18 +69,22 @@ for iter=1:maxIter
   %
   % Hint: You should use the logsumexp() function here to do
   % probability normalization in log space to avoid numerical issues
-  
-  ClassProb = zeros(N,K);
+ 
   
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % YOUR CODE HERE
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
+  [loglikelihood(iter), soft_labels, log_soft_labels]=ComputeLogLikelihood(P,G,poseData);
+  
+  
+  % fprintf('log likelihood: %f\n', loglikelihood);
+
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
   % Compute log likelihood of dataset for this iteration
   % Hint: You should use the logsumexp() function here
-  loglikelihood(iter) = 0;
+
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % YOUR CODE HERE
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,7 +1,7 @@
 % File: RecognizeActions.m
 %
 % Copyright (C) Daphne Koller, Stanford Univerity, 2012
-
+    
 function [accuracy, predicted_labels] = RecognizeActions(datasetTrain, datasetTest, G, maxIter)
 
 % INPUTS
@@ -20,6 +20,9 @@ function [accuracy, predicted_labels] = RecognizeActions(datasetTrain, datasetTe
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+ 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

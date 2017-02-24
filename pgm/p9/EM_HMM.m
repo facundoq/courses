@@ -39,10 +39,10 @@ PairProb = InitialPairProb;
 
 loglikelihood = zeros(maxIter,1);
 
-P.c = [];
-P.clg.sigma_x = [];
-P.clg.sigma_y = [];
-P.clg.sigma_angle = [];
+firstPoseInAction = zeros(length(actionData), 1);
+for i=1:length(actionData)
+  firstPoseInAction(i) = actionData(i).marg_ind(1);
+end
 
 % EM algorithm
 for iter=1:maxIter
@@ -53,21 +53,29 @@ for iter=1:maxIter
   % Make sure to choose the right parameterization based on G(i,1)
   % Hint: This part should be similar to your work from PA8 and EM_cluster.m
   
-  P.c = zeros(1,K);
+  
   
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % YOUR CODE HERE
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+
+  P = LearnCPDsGivenGraph(poseData, G, ClassProb);
+  P.c = mean(ClassProb(firstPoseInAction, :));
+  
   
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  
   % M-STEP to estimate parameters for transition matrix
   % Fill in P.transMatrix, the transition matrix for states
   % P.transMatrix(i,j) is the probability of transitioning from state i to state j
   P.transMatrix = zeros(K,K);
   
+  for i=1:size(PairProb,1)
+      P.transMatrix = P.transMatrix +reshape(PairProb(i,:),K,K);
+  end
+  
   % Add Dirichlet prior based on size of poseData to avoid 0 probabilities
   P.transMatrix = P.transMatrix + size(PairProb,1) * .05;
+  P.transMatrix =bsxfun(@rdivide,P.transMatrix,sum(P.transMatrix,2));
   
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % YOUR CODE HERE
@@ -85,7 +93,11 @@ for iter=1:maxIter
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % YOUR CODE HERE
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  
+  Pu=P;
+  Pu.c=ones(1,K); % since now we dont have just a bag of poses but a 
+  % sequence of them, this just calculates the prob of each class for each
+  % pose without a prior P(Pose)
+  [poses_loglikelihood, EmissionProb, logEmissionProb]=ComputeLogLikelihood(Pu,G,poseData);
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
     
@@ -95,15 +107,49 @@ for iter=1:maxIter
   % Also compute log likelihood of dataset for this iteration
   % You should do inference and compute everything in log space, only converting to probability space at the end
   % Hint: You should use the logsumexp() function here to do probability normalization in log space to avoid numerical issues
+ 
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % YOUR CODE HERE
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
   ClassProb = zeros(N,K);
   PairProb = zeros(V,K^2);
   loglikelihood(iter) = 0;
-  
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  % YOUR CODE HERE
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+  PairProbIndex=1;
+  ClassProbIndex=1;
+  for i=1:length(actionData)
+    action_poses_indices=actionData(i).marg_ind;
+    n_poses=length(action_poses_indices);
+    n_transitions=n_poses-1;
+    
+    
+    factors=factors_for_hmm(P,logEmissionProb(action_poses_indices,:));
+    [M calibratedTree]=ComputeExactMarginalsHMM(factors); 
+    
+    
+    %TODO get PairProbIndex for this data
+    actionClassProb=zeros(n_poses,K);
+    for j=1:length(M)
+        constant = logsumexp(M(i).val);
+        actionClassProb(j,:)=exp(M(j).val-constant); % normalize in logspace before applying exp
+    end
+    ClassProb(ClassProbIndex:ClassProbIndex+n_poses-1,:)=actionClassProb;
+    ClassProbIndex=ClassProbIndex+n_poses;
+    
+    
+    %TODO get PairProbIndex for this data
+    actionPairProb=zeros(n_transitions,K*K);
+    cs=calibratedTree.cliqueList;
+    for j=1:n_transitions
+        constant = logsumexp(cs(i).val);
+        % normalize in logspace before applying exp
+        actionPairProb(j,:)=exp(cs(j).val-constant);p
+    end
+    PairProb(PairProbIndex:PairProbIndex+n_transitions-1,:)=actionPairProb;
+    PairProbIndex=PairProbIndex+n_transitions;
+    
+    
+  end
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
   % Print out loglikelihood
@@ -124,3 +170,32 @@ end
 
 % Remove iterations if we exited early
 loglikelihood = loglikelihood(1:iter);
+
+
+function factors=factors_for_hmm(P,log_emission_probabilities)
+[N,K]=size(log_emission_probabilities);
+factors=repmat(EmptyFactorStruct(),1,2*N);
+tm=log(P.transMatrix);
+for i=1:N
+    if i==1
+        factors(1).var=[1];
+        factors(1).card=[K]; % K poses
+        factors(1).val=log(P.c);
+    else
+        factors(i).var=[i,i-1];
+        factors(i).card=[K,K];
+        % maybe this could be done with a reshape(tm,1,K*K) but just to be
+        % on the safe side...
+        n_assigments=K*K;
+        assigments=IndexToAssignment(1:n_assigments,factors(i).card);
+        for j=1:n_assigments
+            factors(i).val(j)=tm(assigments(1),assigments(2));
+        end
+    end
+    factors(i+N).var=i;
+    factors(i+N).card=K;
+    factors(i+N).val=log_emission_probabilities(i,:);
+    
+
+end
+
