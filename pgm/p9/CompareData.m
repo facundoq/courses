@@ -207,9 +207,9 @@ function retval = comparedatarecurse(data1, data2, context, Params)
             context,ParamsP.NumericTolerance);
              
         strData1 = num2str(data1, '%.3g ');
-        fprintf(ParamsP.fid, '   Found: [ %s ]\n', strData1.');
+        fprintf(ParamsP.fid, '   Found: [ %s  ]\n', strData1.');
         strData2 = num2str(data2, '%.3g ');
-        fprintf(ParamsP.fid, 'Expected: [ %s ]\n', strData2.');
+        fprintf(ParamsP.fid, 'Expected: [ %s  ]\n', strData2.');
               
         if ParamsP.showMinMaxAbsDiff == 1
           ind2subvretstr = ind2subv(size(data1), mindiffi);

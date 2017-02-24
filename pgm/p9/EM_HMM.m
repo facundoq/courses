@@ -2,7 +2,7 @@
 %
 % Copyright (C) Daphne Koller, Stanford Univerity, 2012
 
-function [P loglikelihood ClassProb PairProb] = EM_HMM(actionData, poseData, G, InitialClassProb, InitialPairProb, maxIter)
+function [P, loglikelihood, ClassProb, PairProb] = EM_HMM(actionData, poseData, G, InitialClassProb, InitialPairProb, maxIter)
 
 % INPUTS
 % actionData: structure holding the actions as described in the PA
@@ -124,13 +124,13 @@ for iter=1:maxIter
     
     
     factors=factors_for_hmm(P,logEmissionProb(action_poses_indices,:));
-    [M calibratedTree]=ComputeExactMarginalsHMM(factors); 
+    [M, calibratedTree]=ComputeExactMarginalsHMM(factors); 
     
     
     %TODO get PairProbIndex for this data
     actionClassProb=zeros(n_poses,K);
     for j=1:length(M)
-        constant = logsumexp(M(i).val);
+        constant = logsumexp(M(j).val);
         actionClassProb(j,:)=exp(M(j).val-constant); % normalize in logspace before applying exp
     end
     ClassProb(ClassProbIndex:ClassProbIndex+n_poses-1,:)=actionClassProb;
@@ -141,14 +141,14 @@ for iter=1:maxIter
     actionPairProb=zeros(n_transitions,K*K);
     cs=calibratedTree.cliqueList;
     for j=1:n_transitions
-        constant = logsumexp(cs(i).val);
+        constant = logsumexp(cs(j).val);
         % normalize in logspace before applying exp
-        actionPairProb(j,:)=exp(cs(j).val-constant);p
+        actionPairProb(j,:)=exp(cs(j).val-constant);
     end
     PairProb(PairProbIndex:PairProbIndex+n_transitions-1,:)=actionPairProb;
     PairProbIndex=PairProbIndex+n_transitions;
-    
-    
+    loglikelihood(iter)=loglikelihood(iter)+  logsumexp(cs(end).val);
+
   end
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
