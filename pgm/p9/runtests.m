@@ -10,7 +10,7 @@ constTOL = 1e-2;
 in=exampleINPUT;
 out=exampleOUTPUT;
 
-testPart=2;
+testPart=4;
 
 fprintf('\n Testing %d ...\n', testPart);
 result = true;
@@ -36,7 +36,7 @@ switch testPart
     case 4
       [accuracy, predicted_labels] = RecognizeActions(in.t3a1,in.t3a2,in.t3a3,in.t3a4);
       result = isEqualTol(accuracy, out.t3a1, 'acc', constTOL) && ...
-               isEqualTol(predicted_labels, out.t3a3, 'pred_labels', constTOL);
+               isEqualTol(predicted_labels, out.t3a2, 'pred_labels', constTOL);
            
 end % end switch
 
