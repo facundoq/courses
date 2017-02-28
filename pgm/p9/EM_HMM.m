@@ -44,6 +44,7 @@ for i=1:length(actionData)
   firstPoseInAction(i) = actionData(i).marg_ind(1);
 end
 
+increasing_iterations=0;
 % EM algorithm
 for iter=1:maxIter
   
@@ -154,16 +155,22 @@ for iter=1:maxIter
   
   % Print out loglikelihood
   disp(sprintf('EM iteration %d: log likelihood: %f', ...
-    iter, loglikelihood(iter)));
+    iter, loglikelihood(iter)/L));
   if exist('OCTAVE_VERSION')
     fflush(stdout);
   end
   
   % Check for overfitting by decreasing loglikelihood
   if iter > 1
-    if loglikelihood(iter) < loglikelihood(iter-1)
-      break;
+    if loglikelihood(iter) <= loglikelihood(iter-1)
+      increasing_iterations=increasing_iterations+1;
+      if (increasing_iterations>2)
+        break;
+      end
+    else
+      increasing_iterations=0;
     end
+    
   end
   
 end

@@ -20,9 +20,23 @@ function [accuracy, predicted_labels] = RecognizeActions(datasetTrain, datasetTe
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+expand_factor=4;
+perturbation_factor=2e-1;
+datasetTrain=expand_dataset(datasetTrain,expand_factor,perturbation_factor);
+
+%TODO recalculate PairProb and MargProb
+k_poses=2;
+datasetTrain=estimate_initial_probabilities(datasetTrain,k_poses);
+
 models=[];
 for i=1:length(datasetTrain)
     action_samples=datasetTrain(i);
+    fprintf('Training model for class %d, %d samples:\n',i,length(action_samples.actionData));
+    
+%     subplot(1,2,1)
+%     imagesc(action_samples.InitialClassProb);colorbar;
+%     subplot(1,2,2)
+%     imagesc(action_samples.InitialPairProb);colorbar;
     [model, loglikelihood, ClassProb, PairProb]=EM_HMM(action_samples.actionData, action_samples.poseData, G, action_samples.InitialClassProb, action_samples.InitialPairProb, maxIter);
     models=[models model];
 end
@@ -37,9 +51,6 @@ end
 % Accuracy is defined as (#correctly classified examples / #total examples)
 % Note that all actions share the same graph parameterization
 
-accuracy = 0;
-predicted_labels = [];
-true_labels=[];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE HERE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
