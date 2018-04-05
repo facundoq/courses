@@ -1,0 +1,133 @@
+% !TeX spellcheck = en_US
+
+
+
+\newcommand{\imageresultsrowotsu}[2]{
+   \begin{subfigure}[t]{0.28\textwidth}
+   \includegraphics[scale=#2]{img/#1_otsu}
+   \caption{Otsu's algorithm on original image}
+   \end{subfigure}
+   \hspace{0.1cm}
+   \begin{subfigure}[t]{0.28\textwidth}
+   \includegraphics[scale=#2]{img/#1_otsu_noise}
+   \caption{Otsu's algorithm on noisy image}
+   \end{subfigure}
+  \\
+  \begin{subfigure}[t]{0.28\textwidth}
+  \includegraphics[scale=#2]{img/#1_otsu_noise_bilateral}
+  \caption{Otsu's algorithm after applying a bilateral filter on the noisy image}
+  \end{subfigure}
+   \hspace{0.1cm}
+   \begin{subfigure}[t]{0.28\textwidth}
+   \includegraphics[scale=#2]{img/#1_otsu_noise_gaussian}
+   \caption{Otsu's algorithm after applying a gaussian filter on the noisy image}
+   \end{subfigure}
+}
+
+
+\newcommand{\imageresultsrowfiltering}[5]{
+   \begin{subfigure}[t]{0.28\textwidth}
+   \includegraphics[scale=#2]{img/#1}
+   \caption{#3}
+   \end{subfigure}
+   \hspace{0.1cm}
+   \begin{subfigure}[t]{0.28\textwidth}
+   \includegraphics[scale=#2]{img/#1_bilateral}
+   \caption{#4}
+   \end{subfigure}
+  \hspace{0.1cm}
+  \begin{subfigure}[t]{0.28\textwidth}
+  \includegraphics[scale=#2]{img/#1_gaussian}
+  \caption{#5}
+  \end{subfigure}
+}
+
+\newcommand{\imageresults}[3]{
+\begin{figure}[H]
+   \centering
+  \imageresultsrowfiltering{#1}{#2}{Original}{Bilateral}{Gaussian} \\
+  \imageresultsrowfiltering{#1_noise}{#2}{Original with noise}{Bilateral with noise}{Gaussian with noise} \\
+  \imageresultsrowotsu{#1}{#3}
+  
+\end{figure}
+}
+
+\newcommand{\plotresults}[2]{
+\begin{figure}[H]
+   \centering
+    \begin{subfigure}[t]{0.44\textwidth}  
+       \includegraphics[scale=#2]{img/plots/#1_otsu_sim}
+       \caption{Similarity for thresholding as a function of noise, with bilateral, gaussian and no filtering.}
+       \end{subfigure}
+       \hspace{0.1cm}
+       \begin{subfigure}[t]{0.44\textwidth}
+       \includegraphics[scale=#2]{img/plots/#1_otsu_reg}
+       \caption{Regularity for thresholding as a function of noise, with bilateral, gaussian and no filtering.}
+       \end{subfigure}
+      \\
+      \begin{subfigure}[t]{0.44\textwidth}
+      \includegraphics[scale=#2]{img/plots/#1_filtering_sim}
+      \caption{Similarity for denoising with bilateral or gaussian filters, as a function of noise.}
+      \end{subfigure}
+       \hspace{0.1cm}
+       \begin{subfigure}[t]{0.44\textwidth}
+       \includegraphics[scale=#2]{img/plots/#1_filtering_reg}
+       \caption{Regularity for denoising with bilateral or gaussian filters, as a function of noise.}
+       \end{subfigure}
+       \caption{Results for file \url{#1}.}
+\end{figure}
+}
+
+In this section, we present plots of the similarity and regularity measures using the testing procedures presented in the previous section. This plots show the change of similarity and regularity as a function of the parameters of each method and the artificial noise levels.
+
+For each of the methods or combination thereof, we also present sample images obtained in the tests for illustration and analysis.
+
+
+\subsection{Sample images}
+
+In the following, for each sample image, the first three images of the figure consist of the original image, and the results of applying bilateral and gaussian filters. The second row consists of the original image with added noise, and the results of applying both filters, again, but to the noisy image. The last two rows consist of the result of Otsu's method on the original, on the noisy version of the original, and on the versions restored by bilateral and gaussian filtering respectively.
+
+The gaussian and bilateral filter applied to the \textbf{original} image both had $\sigma_d=1$, and the bilateral filter's $\sigma_r$ was equal to $7$. Otsu's method was applied with a histogram of 256 bins.
+
+The noisy version of the synthetic images was generated with white gaussian noise, $\sigma=1.5$. 
+
+The gaussian and bilateral filter applied to the \textbf{noisy} image both had $\sigma_d=1.5$, and the bilateral filter's $\sigma_r$ was equal to $7$. Otsu's method was applied with a histogram of 256 bins. 
+
+\subsubsection{Synthetic images}
+
+\foreach \image in {borders,borders_contrast,gradient1,gradient2}{
+  \imageresults{results/\image}{0.33}{0.38}
+}
+
+
+\subsubsection{MRI images}
+\foreach \image in {mri1,mri2,mri3}{
+  \imageresults{results/\image}{0.6}{0.7}
+}
+
+
+\subsection{Similarity and Regularity Plots}
+
+Here we show plots of the similarity and regularity of the transformations. For each image, we show plots of both $Sim$ and $Reg$ for both types of filtering, and for Otsu's algorithm, with and without noise and denoising with both types of filters.
+
+Each plot is obtained by varying the noise of the image through values $\sigma \in \braces{ 0, 0.25, 0.5,1,2,3,5 }$. For gaussian filtering, we show results for $\sigma  \in \braces{ 0.5,1,2 }$. For bilateral filtering, we tried the same $\sigma_d$ as those $\sigma$ employed for gaussian filtering, and we also varied $\sigma_r \in \braces{2,20 }$. 
+
+In the plots for Otsu's method, the dashes-and-points blue line shows the $Sim$ and $Reg$ between the application of Otsu's to the original image, and the application of Otsu's to the noisy image without any denoising filter.
+
+In the plots for Otsu's method and synthetic images, we have excluded the noise value $\sigma=2$ for gaussian filtering because it gave very extreme values of $Sig$ and $Reg$ and hence distorted the plots. 
+
+\subsubsection{Synthetic images plots}
+
+\foreach \image in {borders,borders_contrast,gradient1,gradient2}{
+  \plotresults{\image}{0.33}
+}
+
+
+\subsubsection{MRI image plot}
+
+\plotresults{mri}{0.33}
+
+%\foreach \image in {mri1,mri2,mri3}{
+%  \plotresults{\image}{0.33}
+%}
+  

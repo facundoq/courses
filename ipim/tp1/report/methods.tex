@@ -1,0 +1,367 @@
+% !TeX spellcheck = en_US
+\subsection{Definitions}
+
+\newcommand{\D}{\ve{D}}
+\newcommand{\DM}{\D_m}
+\newcommand{\V}{\ve{S}}
+
+\subsubsection*{Images}
+
+A grayscale image is a function that maps pixel positions or indexes $\pv \in \D$ to image intensity values $\V$:
+ 
+\ma{
+\fdef{I}{\D}{\V}
+}
+
+The domain $\D$ is usually defined as $\D=\reals^d$ for a $d$ dimensional image.
+
+The range $\V$ can be defined as $\V=\reals$ in its most general formulation, o more commonly as $\V= [0 \dots 1]$ in the case of \textbf{continuous intensities}. 
+
+We can also define a \textbf{discrete range} such that $\V=\{0,1,\dots,K\}$; a typical value for $K$ is $2^8-1=255$ to model \textbf{8-bit grayscale images}.
+
+The \textbf{discrete} version of a grayscale image with intensities $\V$ and spatial resolution $R_s$ can be defined by restricting the domain to an integer subset of $\reals^d$. Therefore, a discrete image can be described as a matrix $\I \in \V^{R_s}$.
+
+For our purposes, since we are interested in $3D$ grayscale fMRI images, we will mostly assume $d=3$, so that in the discrete case $R_s= n \times m \times p$, ie, a $\I$ is a 3 dimensional array with size $n \times m \times p$ and index set $\DM= \{1,\dots,n\} \times \{1,\dots,m\} \times \{1,\dots,p\}$.
+
+We also define $N=|\DM|$, amount of pixels in the image.
+
+\subsubsection*{Histograms}
+
+The histogram $H$ of a discrete grayscale image $\I$ with discrete intensities $\V=\{0,1,2,\dots,255\}$ is a function maps intensity values $k$ to the number of pixels with that intensity, that is, the number of pixels $\pv$ such that $\I(\pv)=k$ \footnote{We will employ function notation $A(i)$ to denote the value of index $i$ of matrix $A$.}.
+
+
+\imagetwo{examples/mri_original}{1}{2D slice of a 3D brain MRI image.}{examples/histogram_mri}{0.4}{Histogram of the 2D slice.}
+
+
+Therefore, $\fdef{H}{\V}{\nats}$, and it is defined as:
+\ma{
+H_{\I}(k) &= \sum_{\pv \in \DM} \delta(\I(\pv),k)\\
+\text{with:} \\
+\delta(a,b)&=\case{1}{0}{a=b}{otherwise}
+}
+
+In the case of continuous intensity values $\V= [0 \dots 1]$, $H$ can be defined by discretizing $\V$ into a finite number $h$ of equally spaced intervals $N_i$ called \textbf{bins}, and calculating the number of pixels $\pv$ with intensities in each bin $N_k$ \footnote{Technically, this definition of $N_k$ is inappropriate because there is overlap between intervals, but we leave it as it is for the sake of clarity.}:
+
+\ma{
+  H_{\I}(k) &= \sum_{\pv \in \DM} \I(\pv) \in N_k\\
+\text{where: } \\
+ N_k &= [\frac{k}{h},\dots,\frac{k+1}{h}]
+}
+
+And so for the continuous case we have $\fdef{H}{ [0,\dots,h-1] }{\nats}$.
+
+For simplicity, when presenting Otsu's method we will use the first definition of the histogram. Also, for efficiency reasons the histogram is usually computed as a vector $\h$ with a single pass through the image pixels.
+
+\subsection{Gaussian Filtering}
+
+The traditional Gaussian filter \footnote{A gaussian isotropic filter, ie, one that has covariance matrix $\sigma I$, where $I$ is the identity matrix} transforms an image $I$ into an image $I'$ so that:
+
+\ma{
+I'(\pv) = k(\pv) \int_{\qv \in \D } c(\pv,\qv) I(\qv) d\qv
+}
+
+Where $c(\xv,\yv)=   e^{ \frac{ -\norm{\pv-\qv} }{2 \sigma^2 }}$ is the closeness function, and
+$k(\pv)=k= \frac{1}{2 \pi \sigma^2}$ is the scaling factor. The constant $\sigma$ determines the width of the filter, in terms of the width of the Gaussian bell described.
+
+This formula basically says that the value of the transformed image $I'$ at pixel $\pv$ is the weighted average of all the pixels of the image $I$, with $c$ as the weighting function. The scaling factor $k(\pv)$ is chosen so that $c$ integrates to 1, and therefore the $dc$ component or average intensity of the image is preserved.
+
+
+Since we want to implement this transformation in a digital image, the discrete version of the filter is similarly given by:
+
+\ma{
+\I'(\pv) &= \frac{\sum_{\qv \in R_s} c(\pv,\qv) I(\qv)}{ S } \\
+\text{with:} \\
+S &= \sum_{\qv \in R_s} c(\pv,\qv)
+}
+
+where $|\cdot|$ denotes set cardinality, and the denominator $S$ preserves the $dc$ component by making the weights sum to $1$.
+%Where the division by $|R_s|$ is again employed to preserve the $dc$ component of the image.
+
+The Gaussian function is very close to zero for values away from the center ($\pv$, in this case) by more than $2 \sigma$, so we can save computing time by averaging only within a neighborhood or window around pixel $\pv$. This yields the formulation:
+
+
+\ma{
+\I'(\pv) &= \frac{\sum_{\qv \in \W} c(\pv,\qv) I(\qv)}{ S } \\
+\text{with:} \\
+\W &=W(\pv,\sigma,R_s) \\
+S &= \sum_{\qv \in \W} c(\pv,\qv)
+}
+
+where $W$ is a function that returns a square window of pixels around $\pv$ such that:
+
+\ma{
+W(\pv,\sigma,R_s) &= \{ \qv \in R_s | \norm{\pv-\qv}_{\infty} \leq ceil(2 \sigma) \} \\
+\text{where:} \\
+\norm{\xv}_{\infty}&= \text{max} \; abs(x_i), \; \range{i}{1}{d}
+}
+
+Therefore $W$ selects the pixels $\qv$ with distance to $\pv$ (induced by the infinity norm $\norm{\xv}_{\infty}$) less than $2 \sigma$.
+
+
+\imagetwo{examples/mri_original}{1}{Original image.}{examples/mri_gaussian}{1}{After applying a gaussian filter}
+
+
+Given that relative to the pixel $\pv$ whose new value is to be computed, the distances $c(\pv,\qv)$ are always the same, a matrix $G$ of weights called a \textbf{kernel} or \textbf{convolution matrix} can be precomputed so that:
+\ma{
+\I'(\pv) &= \sum_{\qv \in \W} G(\pv-\qv) I(\qv) \\
+}
+
+In the case of a square 3D image of dimensions $N=M^3$, with a square window of size $K$, the naive implementation of this formula as an algorithm yields a time complexity of $O(K M^3 )$, but there are many schemes that can efficiently calculate or approximate the filtered image \cite{kovesi}.
+
+\subsection{Bilateral Filtering}
+
+Following an analogous argument to domain filtering, a range filtering technique with a Gaussian function $s$ as a similarity function applied without a notion of neighborhood would produce the following:
+
+\ma{
+I'(\pv) = k(\pv) \int_{\qv \in \D } s( I(\pv),I(\qv)) I(\qv) d\qv
+}
+
+with $k(\pv)= \frac{1}{\int_{\qv \in \D } s( I(\pv),I(\qv)) d\qv}$ to preserve the $dc$ component of the image. The problem with this approach is that range filtering alone makes little sense for denoising and smoothing, since it would just make pixels with similar intensities more similar, regardless of where they are in the image. The concept of derivative and smoothness is an intrinsically local one, and therefore range filtering alone is not useful for smoothing \footnote{It could, perhaps, be though of as an iteration scheme in a color reduction procedure, since it makes colors more similar.}.
+
+
+Bilateral filtering therefore includes both a domain weighting function and a range weighting function, yielding a similar formulation to Gaussian filtering, but with the range-based similarity weighting function $s$. Given an image $I$, the filter computes $I'$ according to:
+
+\ma{
+I'(\pv) = k(\pv) \int_{\qv \in \D } c(\pv,\qv) s( I(\pv),I(\qv)) I(\qv) d\qv
+}
+
+with $k(\pv)= \frac{1}{\int_{\qv \in \D } c(\pv,\qv) s( I(\pv),I(\qv)) d\qv}$ to preserve the dc component as before.
+
+In the case of $c$ and $s$ taking the form of a Gaussian similarity function, we have $c=e^{ \frac{ -abs(s1-s2) }{2 \sigma_d^2 }}$ as before, and $s(s1,s2)=e^{ \frac{ -abs(s1-s2) }{2 \sigma_r^2 }}$, where $\sigma_d$ and $\sigma_r$ are the widths of the filter for the domain and the range respectively.
+
+The discrete version of the filter is given by:
+
+\ma{
+\I'(\pv) &= \frac{\sum_{\qv \in \W} c(\pv,\qv) s( I(\pv),I(\qv)) I(\qv)}{ S } \\
+\W &=W(\pv,\sigma_d,R_s) \\
+S &= \sum_{\qv \in \W} c(\pv,\qv)  s( I(\pv),I(\qv))
+}
+
+This is the same as Gaussian filtering, except that:
+
+\begin{itemize}
+\item The range similarity weight, $s( I(\pv),I(\qv))$, is included in the sum to compute $\I'$
+\item The size of the window is chosen according to $\sigma_d$, since using a window is an approximation technique that can be applied only to the domain filter, because it uses the fact that the filter rapidly decays in strength at distances greater than $2 \sigma_d$.
+\item The normalizing term $S$ now also sums $s( I(\pv),I(\qv))$.
+\item A convolution matrix $G$ cannot be pre-computed because $s( I(\pv),I(\qv))$ depends on the actual intensity values of $\pv$ and $\qv$, not their distance.
+\end{itemize}
+
+The output of gaussian filtering and bilateral filtering is similar, because the are both performing a smoothing operation, but the bilateral image will typically be less smooth since it preserves some higher frequency information.
+
+\imagethree{examples/mri_original}{0.6}{Original image.}
+{examples/mri_bilateral}{0.6}{After applying a bilateral filter}
+{examples/mri_gaussian}{0.6}{After applying a gaussian filter}
+
+
+The naive algorithm is of the same order as gaussian filtering, although it is generally slower since a convolution matrix $G$ cannot be precomputed. Also, when $\sigma_r \rightarrow \infty$, all distances between pixel intensities become $1$, and so in that case bilateral filtering is equivalent to gaussian filtering.
+
+\imagethree{examples/mri_bilateral_d1_r20}{0.6}{Bilateral filtering with $\sigma_r=20$, $\sigma_d=1$.}
+{examples/mri_bilateral_d1_r200}{0.6}{Bilateral filtering with $\sigma_r=200$, $\sigma_d=1$.}
+{examples/mri_gaussian_d1}{0.6}{Gaussian filtering, $\sigma_d=1$.}
+
+
+\subsection{Thresholding with Otsu's method}
+\label{otsu}
+
+\newcommand{\kz}{k_0}
+\newcommand{\ko}{k_1}
+
+\newcommand{\mz}{\mu_0}
+\newcommand{\mo}{\mu_1}
+\newcommand{\mt}{\mu_T}
+
+
+\newcommand{\sdz}{\sigma_0}
+\newcommand{\sdo}{\sigma_1}
+
+\newcommand{\vz}{\sigma_0^2}
+\newcommand{\vo}{\sigma_1^2}
+\newcommand{\vt}{\sigma_T^2}
+
+
+Assuming a discrete set of intensities $\V=\{0,2,\dots,255\}$, the simplest thresholding scheme calculates, given a threshold level $k$ and an image $I$, a thresholded image $I'$ such that:
+
+\ma{
+I'(\pv)= \caseotherwise{255}{0}{ I(\pv)>k} 
+}
+
+This formula simply changes every pixel of $I$ to a $0$ or $255$ depending on whether the pixel is below or above the threshold level. The discrete case is the same, with $I$ replaced by $\I$. There are $|\V|=256$ threshold levels to choose from. 
+
+\imagethree{examples/thresolded_mri_20}{0.6}{MRI image after applying thresholding with $k=20$. With this value, the cranium is distinguished from the rest of the brain.}
+{examples/thresolded_mri_100}{0.6}{MRI image after applying thresholding with $k=100$. With this value, CSF could be separated from white and gray matter.}
+{examples/thresolded_mri_150}{0.6}{MRI image after applying thresholding with $k=150$. With this value, white matter turns into white pixels, white CSF and gray matter mostly turn into black ones.}
+
+The difficult part of an adaptive thresholding scheme is not the application of the threshold, but its determination. Otsu's algorithm is a histogram-based method that approaches the problem of guessing the optimal threshold by defining a measure $M(k)$ of the appropriateness of a threshold $k$, and performing a brute-force search on the range of the image $\V$ to establish the value $k^*$ that maximizes $M$.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+  \begin{axis}[xlabel=k,ylabel=M(k)]
+    \addplot [no marks] table[x index=0, y index=1,col sep=comma] {img/examples/otsu_values.csv};
+  \end{axis}
+
+\end{tikzpicture}
+\caption{Values of $k$ vs $M(k)$ for the histogram shown before.}
+\end{figure}
+
+We will now formally define the measure $M$. 
+
+The method computes the histogram $H$ of the image once, and after that only uses the histogram data to determine $k^*$. For simplicity, we will divide the histogram $H$ by the number of pixels of the image $N$ to obtain a normalized histogram $p$, such that:
+
+\ma{
+p_i = \frac{H(i)}{N}
+}
+ 
+In this way, $p_k$ can be interpreted as the relative frequency of intensity level $i$, and therefore the histogram can be regarded as a probability distribution.
+
+\imagetwo{examples/mri_original}{1}{2D slice of a 3D brain MRI image.}{examples/histogram_mri}{0.37}{Normalized histogram of the 2D slice of the image. Values in the y-axis are now frequencies instead of pixel intensity counts. } 
+
+
+The measure $M(k)$ is based on considering that the intensities $i$ of each pixel of the image are generated by a probability distribution $P(k)$, of which the normalized histogram given by $p_i$ is our estimator.
+
+Moreover, we consider that there are two sources of grayscale intensity values, one for each class or set $C_0$ and $C_1$ (the ones obtained by thresholding of the images based on the value of $k$). One class can generate the intensity value of more pixels, that is, the probability of a pixel being generated by that class can be greater than for the other.
+
+\image{diagrams/otsu_process}{0.25}{ Two probabilistic processes that generate intensity levels of class $C_0$ and class $C_1$.}
+
+The estimators for the probability of class $C_0$ and $C_1$ being chosen to generate the intensity value of a pixel can be calculated in terms of the histogram $p_i$ as:
+
+\ma{
+\omega_0 &= P(C_0)= \sum_{i=0} p_i \\
+\omega_1 &= P(C_1)= \sum_{i=k+1}^{K} p_i 
+}
+
+We can now therefore consider the histogram as two different histograms, one for each class:
+
+\image{diagrams/2histograms}{0.5}{ Two histograms, for the pixels of class $C_0$ and class $C_1$.}
+
+Therefore, for each class we can estimate the conditional probabilities $P(k|C_0)$  and $P(k|C_1)$ as:
+
+\ma{
+P(i|C_0) &= p_i^0 = \caseotherwise{\frac{p_i}{\omega_0}}{0}{0 \leq i \leq k} \\
+P(i|C_1) &= p_i^1 =\caseotherwise{\frac{p_i}{\omega_1}}{0}{k+1 \leq i \leq K} 
+}
+
+
+Each process is probabilistic, and so has mean intensity values  $\mz$ and $\mo$, and variances $\vz$ and $\vo$. The means and variances can be calculated as:
+
+\ma{
+\mz &= \sum_{i=0}^k p_i^0 i  & &
+\vz = \sum_{i=0}^k p_i^0 (i-\mz)^2 \\
+\mo &= \sum_{i=k+1}^{K} p_i^1 i & &
+\vo = \sum_{i=k+1}^K p_i^1 (i-\mo)^2 
+}
+
+Given a value of k, we can define $M$ to be:
+
+\ma{
+M = \sigma_W^2 = \omega_0 \vz  +  \omega_1 \vo
+}
+
+The measure $\sigma_W^2$ is the weighted sum of the variances of each class, and is called the \textbf{within-class variance}. The weights give more importance to classes with more pixels, as the estimation of its variance has better statistical significance. We can easily find the value of $k$ such that maximizes $\sigma_W^2$ by brute-force search with $k=0,\dots,K$. 
+
+As stated before, the hypothesis behind this measure is that the smaller the 
+
+Otsu proves that the so called \textbf{between-class variance} $\sigma_B^2$ is a measure $M$ that is equivalent to $\sigma_W^2$ in that minimizing $\sigma_B^2$ also maximizes $\sigma_W^2$.  
+
+We can derive $\sigma_B^2$ by thinking of sampling not pixels intensities, but class means $\mz$ and $\mo$, with ocurrence probabilities $\omega_0$ and $\omega_1$. So $\mz$ and $\mo$ would be two samples, and therefore we can calculate their mean, which in turn is equivalent to the mean of the image or dc component $\mt$ given by:
+
+\ma{
+\mt = \omega_0 \mz  +  \omega_1 \mo = \sum_{i=0}^K p_i i
+}
+
+So, the variance $\sigma_B^2$ is naturally given by:
+
+\ma{
+\sigma_B^2 = \omega_0 (\mz - \mt) + \omega_1 (\mo - \mt)
+}
+
+Therefore, another scheme of finding the same optimal value of $k$ is to iterate through the values of $k$ to find the value $k^*$ that minimizes $\sigma_B^2$. 
+
+This approach is also a brute-force search, but can be more efficient since it saves us from calculating $\vz$ and $\vo$ in each iteration. Also, since $\mo=\mt-\mz$, and $\mt$ does not change with $k$, we only need to re-calculate $\mz$ in each iteration, which does not require a full evaluation of the sum since it is just a matter of summing one floating point number. The implementation details of this scheme can be gleaned from the code attached.
+
+\subsection{Dataset and testing methods}
+
+We will employ the same dataset to test Otsu's method and both types of filtering.
+
+The dataset consists of both a synthetic image set and an fMRI image set. The first's purpose is to assess the correctness of the implemented algorithms, and glean some basic insights about their advantages and disadvantages. The second is to test them in a real-world setting, particularly in MRI denoising and gray/white matter segmentation.
+
+\subsubsection*{First dataset:}
+
+The first dataset consists of the following synthetic 2D images, created manually using Inkscape, a vector-based image editor, for the \textit{borders} images, and the numpy package  for the \textit{gradient} images.
+
+\imagetwo
+{1000/borders}{0.25}{A synthetic image with various types of borders.}
+{1000/borders_contrast}{0.25}{A synthetic image with various types of borders and various types of contrast}
+
+For Otsu's methd, the first image serves as a basic test to verify that the algorithm correctly determines a value for $k$ in a trivial case. Since bilateral reportedly preserves object boundaries and lines, we can test this assumption on the various types of borders that appear in the image, and measure the difference with gaussian filtering.
+
+Image $b$ is the same image $a$, but some objects in $b$ have very little contrast, ie, the intensity of the foreground has very little absolute difference with that of the foreground. In this way, we can explore the effects of varying the intensity levels on both algorithms.
+
+\imagetwo
+{1000/gradient1}{0.20}{A synthetic image with a central area filled with a dark horizontal gradient}
+{1000/gradient2}{0.20}{A synthetic image with a central area filled with a light horizontal gradient}
+
+This two images include gradients of different strength, to evaluate (a) the threshold determined by Otsu's algorithm when varying the darkness of the gradient, (b) how colors around the borders of an object affect bilateral filtering, and whether it reduces to gaussian filtering in some cases, if it generates color patches, etc.
+
+All images have a resolution of 300x300.
+
+\subsubsection*{Second dataset:} The second dataset consists of a single real-life MRI 3D image of a brain, of resolution $145 \times 174 \times 145$.
+
+\imagethree{1000/mri1}{0.6}{A sagittal 2D slice of the 3D MRI image.}
+{1000/mri2}{0.6}{A coronal 2D slice of the 3D MRI image.}
+{1000/mri3}{0.6}{An axial 2D slice of the 3D MRI image.}
+
+The images show three orthogonal slices of the 3D MRI; the algorithms will be run on the 3D image and 2D slices will be generated for visual inspection.
+
+\subsubsection*{Testing method}
+
+We will first run the algorithms on this images with several noise intensities to see how Otsu's method reacts to it and whether the filtering techniques are effective at denoising. Some samples images will be produced to be able to visually inspect and analyze the output of the algorithms.
+
+Remembering our basic noise equation from the introduction, $v(i) = u(i)+n(i)$, where $v$ was the observed image, $u$ the true image and $n$ the noise, given our dataset consists of original images $u(i)$, we will add a known noise $n(i)$ to each image to produce a supposedly observed $v$. Then, we will apply three different testing schemes:
+
+\begin{enumerate}
+
+\item To test the filtering algorithms, we will apply the filter to $v$, to produce a restored image $r$. Because we know the original image $u$, we will then compare $r$ and $u$ to see how well the filter removed the noise from the image.
+
+\image{diagrams/test_filtering}{0.7}{Testing sequence for filtering algorithms.}
+
+\item To test Otsu's thresholding, we will threshold both $v$ and $u$ and compare their differences, and so test the resilience of the method in the presence of noise.
+
+\image{diagrams/test_otsu}{0.7}{Testing sequence for Otsu's method.}
+
+\item To test Otsu's thresholding, we will also apply a denoising filter to $v$ to produce a restored image $r$, and then threshold $r$ and $u$, and compare their differences as before.
+
+\image{diagrams/test_otsu_filtering}{0.7}{Testing sequence for Otsu's method with a filtering algorithm.}
+
+
+\end{enumerate}
+
+\newcommand{\J}{\ve{J}}
+
+To gauge the difference between images $\I$ and $\J$, we will employ an objective measure of image similarity. The \textbf{similarity measure} is:
+
+\ma{
+Sim(\I,\J)= \frac{1}{N} \sum_{i=1}^{N} (I(\pv_i)-J(\pv_i))^2
+}
+
+which is related to the \textbf{squared frobenius norm} $ \norm{\I-\J}_2$.
+
+In the case of the filtering algorithms, it is also useful to evaluate the smoothness of the denoised image. In general, we want smoother results, since a common assumption is that `normal' images have few drastic changes in intensity. For that, we will use the \textbf{regularity} measure of an image:
+
+
+\ma{
+Reg(\J) = \frac{1}{N} \sum_{i=1}^{N} |\nabla J(\pv_i)|
+}
+
+
+Combining this two measures, we get the energy functional $E(\I,\J)$ of the transformation from $\I$ to $\J$:
+
+\ma{
+E(\I,\J)= Sim(\I,\J)+ Reg(\J)
+}
+
+The similarity term measures the difference between the two images, and the regularization term penalizes images with a high degree of non-smoothness. This is the error measure we refer to in the testing diagrams above \footnote{Technically, because of the regularization term $Reg$, the value $E(\I,\J)$ is only $0$ when both $\I$ and $\J$ are images with the \textit{same constant intensity} value in every pixel, ie, both images are the same and have exactly the same color in all their pixels. Therefore, the energy function is not truly an error measure, and that's why the fuzzier term \textit{energy function} is used.}.
+
+This formulas will be used as objective measures of the goodness of a filtering operation and thresholding operation.
+
+All tests with bilateral and gaussian filtering are repeated varying the value of the corresponding $\sigma$ that specifies the width of the applied kernels.

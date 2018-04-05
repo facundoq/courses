@@ -1,0 +1,18 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Materials and methods}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Definitions}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Gaussian Filtering}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{Bilateral Filtering}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.4}{Thresholding with Otsu's method}{section.2}% 6
+\BOOKMARK [2][-]{subsection.2.5}{Dataset and testing methods}{section.2}% 7
+\BOOKMARK [1][-]{section.3}{Results}{}% 8
+\BOOKMARK [2][-]{subsection.3.1}{Sample images}{section.3}% 9
+\BOOKMARK [3][-]{subsubsection.3.1.1}{Synthetic images}{subsection.3.1}% 10
+\BOOKMARK [3][-]{subsubsection.3.1.2}{MRI images}{subsection.3.1}% 11
+\BOOKMARK [2][-]{subsection.3.2}{Similarity and Regularity Plots}{section.3}% 12
+\BOOKMARK [3][-]{subsubsection.3.2.1}{Synthetic images plots}{subsection.3.2}% 13
+\BOOKMARK [3][-]{subsubsection.3.2.2}{MRI image plot}{subsection.3.2}% 14
+\BOOKMARK [1][-]{section.4}{Discussion}{}% 15
+\BOOKMARK [2][-]{subsection.4.1}{Sample images}{section.4}% 16
+\BOOKMARK [2][-]{subsection.4.2}{Similarity and Regularity Plots}{section.4}% 17
+\BOOKMARK [2][-]{subsection.4.3}{Conclusion}{section.4}% 18

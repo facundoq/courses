@@ -1,0 +1,19 @@
+\select@language {english}
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}
+\contentsline {section}{\numberline {2}Materials and methods}{6}{section.2}
+\contentsline {subsection}{\numberline {2.1}Definitions}{6}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Gaussian Filtering}{8}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Bilateral Filtering}{9}{subsection.2.3}
+\contentsline {subsection}{\numberline {2.4}Thresholding with Otsu's method}{11}{subsection.2.4}
+\contentsline {subsection}{\numberline {2.5}Dataset and testing methods}{17}{subsection.2.5}
+\contentsline {section}{\numberline {3}Results}{23}{section.3}
+\contentsline {subsection}{\numberline {3.1}Sample images}{23}{subsection.3.1}
+\contentsline {subsubsection}{\numberline {3.1.1}Synthetic images}{26}{subsubsection.3.1.1}
+\contentsline {subsubsection}{\numberline {3.1.2}MRI images}{30}{subsubsection.3.1.2}
+\contentsline {subsection}{\numberline {3.2}Similarity and Regularity Plots}{32}{subsection.3.2}
+\contentsline {subsubsection}{\numberline {3.2.1}Synthetic images plots}{34}{subsubsection.3.2.1}
+\contentsline {subsubsection}{\numberline {3.2.2}MRI image plot}{38}{subsubsection.3.2.2}
+\contentsline {section}{\numberline {4}Discussion}{38}{section.4}
+\contentsline {subsection}{\numberline {4.1}Sample images}{38}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Similarity and Regularity Plots}{40}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}Conclusion}{41}{subsection.4.3}

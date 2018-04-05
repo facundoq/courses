@@ -1,0 +1,493 @@
+% generales
+
+\setcounter{secnumdepth}{5}
+\newcommand{\chapterimagetwo}[6]{
+\begin{figure}[H]
+   \centering
+   \begin{minipage}[b]{0.50\linewidth}
+   \centering
+   \includegraphics[scale=#3]{img/\chapterid/#1}
+   \caption{#2}
+   \label{fig:#2}
+   \end{minipage}
+   \hspace{0.5cm}
+   \begin{minipage}[b]{0.50\linewidth}
+   \centering
+   \includegraphics[scale=#6]{img/\chapterid/#4}
+   \caption{#5}
+   \label{fig:#4}
+   \end{minipage}
+\end{figure}
+}
+
+
+\newcommand{\imagetwo}[6]{
+\begin{figure}[H]
+   \centering
+   \begin{subfigure}[t]{0.45\textwidth}
+   \includegraphics[scale=#2]{img/#1}
+   \caption{#3}
+ %  \label{fig:#2}
+   \end{subfigure}
+   \hspace{0.5cm}
+   \begin{subfigure}[t]{0.45\textwidth}
+   \includegraphics[scale=#5]{img/#4}
+   \caption{#6}
+  % \label{fig:#4}
+   \end{subfigure}
+\end{figure}
+}
+
+
+\newcommand{\imagethree}[9]{
+\begin{figure}[H]
+   \centering
+   \begin{subfigure}[t]{0.28\textwidth}
+   \includegraphics[scale=#2]{img/#1}
+   \caption{#3}
+   %\label{fig:#2}
+   \end{subfigure}
+   \hspace{0.1cm}
+   \begin{subfigure}[t]{0.28\textwidth}
+   \includegraphics[scale=#5]{img/#4}
+   \caption{#6}
+   %\label{fig:#4}
+   \end{subfigure}
+  \hspace{0.1cm}
+  \begin{subfigure}[t]{0.28\textwidth}
+  \includegraphics[scale=#8]{img/#7}
+  \caption{#9}
+  %\label{fig:#7}
+  \end{subfigure}
+
+\end{figure}
+}
+\newcommand{\bimage}[4][]{
+\begin{figure}[H]
+   \centering
+   \framebox{Here goes image \detokenize{#2}.}\\
+   \framebox{Description: #1}
+   
+   \caption{#4}
+   
+\end{figure}
+}
+
+\newcommand{\image}[4][]{
+\begin{figure}[H]
+   \centering
+   \includegraphics[scale=#3]{img/#2}
+   \caption{#4}
+   #1
+\end{figure}
+}
+
+%figures
+\newcommand{\imagegen}[4][]{
+\begin{figure}[H]
+   \centering
+   \includegraphics[scale=#3]{img/#2}
+   \caption{#4}
+   #1
+\end{figure}
+}
+
+\newcommand{\tikzimage}[4][]{
+\begin{figure}[H]
+   \centering
+  \includegraphics[#3]{tikz/\chapterid/#2}
+   \caption{#4}
+   #1
+\end{figure}
+}
+
+\newcommand{\tikzimagetwo}[6]{
+\begin{figure}[H]
+   \centering
+   \begin{subfigure}[t]{0.45\linewidth}
+   \includegraphics[#2]{tikz/\chapterid/#1}
+   \caption{#3}
+   \label{fig:#2}
+   \end{subfigure}
+   \hspace{0.3cm}
+   \begin{subfigure}[t]{0.45\linewidth}
+   \includegraphics[#5]{tikz/\chapterid/#4}
+   \caption{#6}
+   \label{fig:#4}
+   \end{subfigure}
+\end{figure}
+}
+
+
+\newcommand{\tikzimagethree}[9]{
+\begin{figure}[H]
+   \centering
+   \begin{subfigure}[t]{0.28\textwidth}
+   \includegraphics[#2]{tikz/\chapterid/#1}
+   \caption{#3}
+   \label{fig:#2}
+   \end{subfigure}
+   \hspace{0.1cm}
+   \begin{subfigure}[t]{0.28\textwidth}
+   \includegraphics[#5]{tikz/\chapterid/#4}
+   \caption{#6}
+   \label{fig:#4}
+   \end{subfigure}
+  \hspace{0.1cm}
+  \begin{subfigure}[t]{0.28\textwidth}
+  \includegraphics[#8]{tikz/\chapterid/#7}
+  \caption{#9}
+  \label{fig:#7}
+  \end{subfigure}
+
+\end{figure}
+}
+
+\newcommand{\tikzimagethreecaption}[7]{
+\begin{figure}[H]
+   \centering
+   \begin{subfigure}[t]{0.28\textwidth}
+   \includegraphics[#2]{tikz/\chapterid/#1}
+   \label{fig:#2}
+   \end{subfigure}
+   \hspace{0.1cm}
+   \begin{subfigure}[t]{0.28\textwidth}
+   \includegraphics[#4]{tikz/\chapterid/#3}
+   \label{fig:#4}
+   \end{subfigure}
+  \hspace{0.1cm}
+  \begin{subfigure}[t]{0.28\textwidth}
+  \includegraphics[#6]{tikz/\chapterid/#5}
+  \label{fig:#7}
+  \end{subfigure}
+  
+  %\caption{Figure caption.}
+\end{figure}
+}
+
+\newcommand{\imageold}[3]{
+\begin{figure}[H]
+   \centering
+   \includegraphics[scale=#2]{img/#1}
+   \caption{#3}
+\end{figure}
+}
+
+\newcommand{\tikzchapterfiguretwo}[5][]{
+\begin{figure}[H]
+   \centering
+   \begin{minipage}[b]{0.50\linewidth}
+   \centering
+   \input{tikz/\chapterid/#2}
+   \caption{#3}
+   \label{fig:#2}
+   \end{minipage}
+   \hspace{0.5cm}
+   \begin{minipage}[b]{0.50\linewidth}
+   \centering
+   \input{tikz/\chapterid/#4}
+   \caption{#5}
+   \label{fig:#4}
+   \end{minipage}
+   #1
+\end{figure}
+}
+
+
+\newcommand{\tikzchapterfigure}[3][]{
+\begin{figure}[H]
+   \centering
+   \input{tikz/\chapterid/#2}
+   \caption{#3}
+   #1
+\end{figure}
+}
+\newcommand{\tikzfigure}[3][]{
+\begin{figure}[H]
+   \centering
+   \input{tikz/#2}
+   \caption{#3}
+   #1
+\end{figure}
+}
+
+
+
+%definitions
+\newcommand{\caset}[6]{ 
+\begin{cases}
+  #1 &\mbox{if} \; #2 \\  
+  #3 &\mbox{if} \; #4 \\      
+  #5 &\mbox{if} \; #6      
+\end{cases}
+}
+
+
+\newcommand{\case}[4]{ 
+\begin{cases}
+  #1 &\mbox{if} \; #3 \\  
+  #2 &\mbox{if} \; #4      
+\end{cases}
+}
+\newcommand{\caseotherwise}[3]{ 
+\begin{cases}
+  #1 &\mbox{if } \; #3 \\  
+  #2 &\mbox{otherwise}      
+\end{cases}
+}
+\newcommand{\fdef}[3]{#1 :: #2 \mapsto #3}
+\newcommand{\range}[3]{#1=#2,\dots,#3}
+\newcommand{\rangeim}{\range{i}{1}{m}}
+\newcommand{\rangein}{\range{i}{1}{n}}
+\newcommand{\rangeip}{\range{i}{1}{p}}
+
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+
+% Sets
+\newcommand{\normal}{\mathcal{N}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\reald}{\reals^d}
+\newcommand{\realdp}{\reals^{d+1}}
+\newcommand{\continuous}{\mathbb{C}}
+\newcommand{\field}{\mathcal{F}}
+\newcommand{\literalset}[1]{\{ #1 \} }
+% Operators
+\newcommand{\derivative}[2]{\dv{#1}{#2}}
+\newcommand{\dv}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\dvn}[3]{\frac{\partial^#3 #1}{\partial^#3 #2}}
+\newcommand{\derivativen}[3]{\dvn{#1}{#2}{#3}}
+\newcommand{\power}[1]{\mathcal P \left({#1}\right)}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\tn}{\rightarrow}
+\newcommand{\nd}{\wedge}
+\newcommand{\ass}{\leftarrow}
+\newcommand{\suml}{\sum\limits}
+\newcommand{\sumi}{\sum\limits_i}
+\newcommand{\sumj}{\sum\limits_j}
+\newcommand{\sumk}{\sum\limits_k}
+\newcommand{\inner}[2]{  \left\langle #1 , #2 \right\rangle }
+\newcommand{\innerg}{ \inner{\cdot}{\cdot} }
+   
+%constants
+\newcommand{\oh}{\frac{1}{2}}
+
+
+%variables
+\newcommand{\ve}[1]{\boldsymbol{#1}}
+\newcommand{\lag}{\mathcal{L}}
+\newcommand{\lagp}{\mathcal{L}_P}
+\newcommand{\tra}{\phi}
+
+%environments
+\newcommand{\ma}[1]{\begin{align*} #1 \end{align*}}
+\newcommand{\optma}[1]{\begin{equation*} \begin{aligned} #1 \end{aligned} \end{equation*}}
+\newcommand{\ec}[1]{ \begin{equation*} #1 \end{equation*} }
+
+%tesina generales
+\newcommand{\texinput}[1]{\input {tex/#1}}
+\newcommand{\chaptertexinput}[1]{\texinput{\chapterid/#1}}
+\newcommand{\chapterinput}[1]{ \labelchapter{#1} \input {tex/#1} }
+\newcommand{\chapterid}{nothing}
+\newcommand{\labelsec}[1]{\label{sec:\chapterid:#1}}
+\newcommand{\refsec}[1]{$\ref{chap:\chapterid}. \ref{sec:\chapterid:#1}$}
+\newcommand{\labelchapter}[1]{\label{chap:#1} \renewcommand{\chapterid}{#1} }
+% applicar \sectionname
+
+
+\newcommand{\realn}{\mathbb{R}^n}
+\newcommand{\realnp}{\mathbb{R}^{n+1}}
+
+
+%secciones
+
+
+%Aprendizaje
+
+\newcommand{\dprob}{\ve{\mathcal{D}}}
+\newcommand{\yi}{\ve{y_i}}
+\renewcommand{\xi}{\ve{x_i}}
+\newcommand{\xv}{\ve{x}}
+\newcommand{\yv}{\ve{y}}
+\newcommand{\wv}{\ve{w}}
+\newcommand{\vv}{\ve{v}}
+\newcommand{\zv}{\ve{0}}
+\newcommand{\rv}{\ve{r}}
+\newcommand{\df}{\ve{d}}
+\newcommand{\loss}{\ell}
+\newcommand{\lossz}{\loss_0}
+\newcommand{\rl}{\rho_{\loss}}
+\newcommand{\rlz}{\rho_{\lossz}}
+
+\newcommand{\cv}{\textit{CV}}
+\newcommand{\ddp}{\mathcal{P}}
+\newcommand{\cde}{D_e}
+\newcommand{\cdp}{D_p}
+
+
+\newcommand{\mue}{\hat{\mu}}
+\newcommand{\sde}{\hat{\sigma}}
+\newcommand{\sd}{\sigma}
+
+\newcommand{\ee}{\rho}
+\newcommand{\kvc}{VC con $k$ repeticiones }
+
+
+%SVM
+
+\newcommand{\hipf}[1]{ \wv \cdot #1 + b}
+\newcommand{\hipfi}{ \hipf{\xi}}
+\newcommand{\hipe}[1]{ \hipf{#1} = 0 }
+\newcommand{\hipei}{ \hipe{\xi} }
+\newcommand{\rangeD}{\range{i}{1}{|D|}}
+
+\newcommand{\maxmin}[2]{\underset{#1}{\text{#2}}}
+\newcommand{\maxarg}[1]{\maxmin{#1}{Max} }
+\newcommand{\minarg}[1]{\maxmin{#1}{Min} }
+
+\newcommand{\hyi}{h(\xi) y_i }
+\newcommand{\hyiz}{\hyi >0}
+\newcommand{\hyio}{\hyi \geq 1}
+
+\newcommand{\riz}{r_i \geq 0}
+\newcommand{\siz}{\si \geq 0}
+\newcommand{\uiz}{\ui \geq 0}
+\newcommand{\aiz}{\ai \geq 0}
+\newcommand{\aizc}{0 \leq \ai \leq c}
+
+\newcommand{\au}{\alpha_1}
+\newcommand{\ad}{\alpha_2}
+
+\newcommand{\costes}{c \sum\limits_i \si}
+\newcommand{\costeu}{\sum\limits_i \si \ui}
+\newcommand{\costea}{\sum\limits_i \ai r_i }
+\newcommand{\costew}{\frac{1}{2} \wv \cdot \wv^t}
+
+\newcommand{\ayi}{\ai y_i }
+\newcommand{\ayx}{\ai y_i \xi}
+\newcommand{\ayxj}{\aj y_j \xj}
+\newcommand{\sumayx}{\sum\limits_i \ai y_i \xi}
+\newcommand{\sumay}{\sum\limits_i \ai y_i}
+\newcommand{\lagai}{ \sumi \ai - \oh \sumi \suml_j  (\ayx \cdot \aj y_j \xj )  }
+\newcommand{\lagd}{\lag_D}
+
+\newcommand{\txi}{\tra(\xi)}
+
+\newcommand{\xj}{\mathbf{x_j}}
+
+\newcommand{\kn}[2]{\kappa_{#1,#2}}
+\newcommand{\kij}{\kn{i}{j}}
+\newcommand{\kji}{\kn{j}{i}}
+\newcommand{\kud}{\kn{1}{2}}
+\newcommand{\kuu}{\kn{1}{1}}
+\newcommand{\kdd}{\kn{2}{2}}
+\newcommand{\kuj}{\kn{1}{j}}
+\newcommand{\kdj}{\kn{2}{j}}
+\newcommand{\kui}{\kn{1}{i}}
+\newcommand{\kdi}{\kn{2}{i}}
+
+\newcommand{\adv}{\ad^v}
+\newcommand{\auv}{\au^v}
+\newcommand{\auaddef}{ \gamma-s \ad}
+
+\newcommand{\sumtn}{\sum_{i=3}^{n}}
+\newcommand{\sumtnj}{\sum_{j=3}^{n}}
+
+
+\newcommand{\updateneta}{
+restrict_{L,H}(\adv+ \Delta \ad)}
+
+
+\newcommand{\av}{\ve{\alpha}}
+\newcommand{\ai}{\alpha_i}
+\newcommand{\aj}{\alpha_j}
+\newcommand{\ui}{u_i}
+\newcommand{\uv}{\ve{u}}
+\newcommand{\lv}{\ve{\lambda}}
+\newcommand{\si}{s_i}
+\newcommand{\ri}{r_i}
+
+% Neural
+\newcommand{\ov}{\ve{o}}
+\newcommand{\ovz}{\ve{o^0}}
+\newcommand{\ovj}{\ve{o^j}}
+\newcommand{\ovjmu}{\ve{o^{j-1}}}
+\newcommand{\oij}{o_i^j}
+
+
+\newcommand{\W}{\ve{W}}
+\newcommand{\dW}{\ve{dW}}
+\newcommand{\Wj}{\ve{W}^j}
+\newcommand{\wvij}{\wv_i^j}
+\newcommand{\netij}{net_i^j}
+\newcommand{\wvijk}[1]{w_i^j(#1)}
+\newcommand{\act}{\theta}
+\newcommand{\actj}{\act_j}
+
+
+%GMM
+\newcommand{\sv}{\ve{s}}
+\newcommand{\gu}{\ve{\mu}_{j,c,k}}
+\newcommand{\gc}{\ve{\Sigma}_{j,c,k}}
+\newcommand{\sck}{\ve{s}_{ck}}
+\newcommand{\scj}[1]{\ve{s}_{c#1}[j]}
+\newcommand{\stcj}{S_{j,c}}
+\newcommand{\xvp}{\xv^{+}}
+\newcommand{\xvm}{\xv^{-}}
+
+%Algebra Lineal
+
+\newcommand{\hiper}{\wv \cdot \xv + b =0}
+\newcommand{\hiperlineal}{\wv \cdot \xv =0}
+% MODELO gestos
+
+
+\newcommand{\vi}{\mathbf{i}}
+\newcommand{\roti}{\mathbf{R_i}}
+
+\newcommand{\existsvand}{\exists v &\in \vset}
+\newcommand{\existsband}{\exists b &\in \reals^3}
+\newcommand{\existsaand}{\exists a &\in \reals}
+\newcommand{\existsomegaand}{\exists \omega &\in \reals}
+\newcommand{\existsrotiand}{\exists \roti &\in \reals^{3 \times 3}}
+
+\newcommand{\existsv}{\exists v \in \vset}
+\newcommand{\existsb}{\exists b \in \reals^3}
+\newcommand{\existsa}{\exists a \in \reals}
+\newcommand{\existsomega}{\exists \omega \in \reals}
+\newcommand{\existsroti}{\exists \roti \in \reals^{3 \times 3}}
+\newcommand{\eqg}{\equiv_{\epsilon}}
+
+
+\newcommand{\tc}[3]{
+\begin{equation}
+  \begin{aligned}[c]
+  #1
+  \end{aligned}
+   #2 \hspace{0.7em}
+  \begin{aligned}[c]
+  #3
+  \end{aligned}
+\end{equation} 
+}  
+
+\newcommand{\tci}[2]{ \tc{#1}{\iff}{#2}}
+\newcommand{\equivalencia}[2]{ \tc{c &\equiv_{#1} c'}{\iff}{#2}}
+\newcommand{\braces}[1]{
+\left\{ #1 \right\}
+}
+\newcommand{\set}[2]{
+  \left\{ 
+  \begin{aligned}[c]
+  #1
+  \end{aligned}
+  \quad \middle| \quad
+  \begin{aligned}[c]
+  #2
+  \end{aligned}
+  \right\}
+}
+
+% DB
+\newcommand{\rf}{\ve{r}}

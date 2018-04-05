@@ -1,0 +1,62 @@
+% !TeX spellcheck = en_US
+
+
+\subsection{Sample images}
+
+In all sample images, the same story can be seen: bilateral filtering  produces little or no image deformation, while the gaussian filter produces noticeable blurring, at the same $\sigma$ level \footnote{Lower $\sigma$ levels for gaussian filtering also produced blurring in our experiments, but still it is questionable if the algorithms should be compared at the same $\sigma$ level, because bilateral filtering will always smooth the image less (except for a constant intensity image, for which bilateral filtering is the same as gaussian filtering)}. It preserves edges better, even and specially in the presence of noise. Bilateral filtering can preserve edges even in areas of little contrast, as can be seen in the \textit{gradient} images. Nonetheless, in the gradient areas, both filtering algorithms perform in more or less the same way.  
+
+As can be seen in the \textit{borders} and \textit{borders\_contrast} synthetic images, bilateral filtering also avoids generating a slight circular splotch where lines cross. This shows the lack of selectiveness in gaussian filtering, which produces effects perceived as color smears. 
+
+For the MRI images, the difference in performance between gaussian and bilateral is greater than for the synthetic images, since the images have much more fine detail. Gaussian filtering is more sensitive to noise in this case, making the filtered image almost unusable.
+
+In turn, bilateral filtering can be readily seen to smooth the gray matter, white matter and CSF areas well, without crossing intensity boundaries, so that the resulting images could be more easily processed using other methods after the filter.
+
+In the \textit{borders} synthetic image, Otsu's algorithm produced reasonable results, leaving out the circles and squares with less contrast out of the resulting image, as well as the background of the bottom square. In the \textit{borders\_contrast} image, only the blackest figures remained, probably because the intensity peaks of the gray figures was probably close to the peak of white color from the background, and hence the threshold was set lower than the gray intensity.
+
+When noise was added, Otsu carried over some artifacts which where negated by bilateral filtering. Gaussian filtering instead added some of its own, as when some of the splotches previously mentioned turned into black pixels that should not be there because the smoothing increased the mean intensity level of the area. 
+
+In the \textit{gradient} images, adding noise caused the limit between the black and white regions inside the square to become fuzzy. This effect was mostly negated by both types of filtering, although the greater strength of gaussian smoothing throws the peaks of the histogram closer to the white color, and hence there is a greater black area than in the other cases. Gaussian filtering also introduces splotches in spots alongside the left and right borders of the inside of the square, probably because a sufficient mass of intensity randomly accumulated.
+
+In the case of MRI, Otsu's method determined a threshold that separated CSF from gray and white matter, but did not distinguish this last two. It's likely that further thresholding with Otsu's on the gray and white matter areas could yield a successful separation. Given that as shown before in section \ref{otsu}, an MRI thresholded image with a threshold of 150 did separate white matter from the rest of the image, this is indeed possible.
+
+Bilateral filtering was again able to negate the effects of noise on the images, making the restored and thresholded image almost the same as the thresholded original. The smoothing strength of Gaussian filtering made it lose almost all fine detail after thresholding, which may be useful when trying to separate the cranium from the rest of the brain, but loses all distinction between CSF and gray/white matter inside the brain.
+
+
+\subsection{Similarity and Regularity Plots}
+
+In general, all plots show similar results:
+
+\begin{itemize}
+
+\item The mean magnitude of the $Reg$ function is much bigger in general than the mean magnitude of the $Sim$ function, and so is generally the predominant term in the $E$ function; this is the reason why we did not directly plot the latter function, but preferred to show $Reg$ and $Sim$ scores separately.
+
+\item For the filtering algorithm's tests, $Sim$ and $Reg$ scores correlate positively with noise, for the thresholding tests the correlation is very low. 
+
+\item For most tests, $Reg$ scores correlate positively with $\sigma_d$ and $\sigma_r$, as should be expected. 
+
+\item Images processed with gaussian filtering become smoother (lower $Reg$ scores) than those treated with the bilateral method, although the latter applied with $\sigma_r=20$ shows behavior similar to gaussian filtering. 
+
+\item \textbf{Images smoothed with bilateral filtering generally have lower $Sim$ scores than those treated with gaussian filtering}, and so should tend to perform better at denoising. 
+
+%\item The $Reg$ scores for bilateral filtering are not much higher than those for the original images. 
+
+\item When very little noise has been added to the image,  ($\sigma \in \braces{0.25, 0.5} $) applying Otsu's algorithm directly on the noisy image can yield better $Sim$ scores than those obtained by previously filtering, probably because the filter distorts the image more than the amount of noise removed. 
+
+\item The $Reg$ score for Otsu's without filtering is always the same or more than that of the method with worst score.
+
+\end{itemize}
+
+The $Reg$ and $Sim$ plots for the thresholding of the images \textit{gradient1} and \textit{gradient2} should probably be disregarded since the determination of the threshold for this images becomes somewhat arbitrary and the values do not reflect any clear trend.
+
+\subsection{Conclusion}
+
+We can conclude that bilateral filtering is indeed a better denoising method in most cases that gaussian filtering, as demonstrated by the result images and the similarity plots. In all cases, visual inspection of the resulting image readily shows that the bilateral filter is more appropriate than the gaussian for denoising, as it distorts the image less across object boundaries and fine detail. 
+
+Otsu's method seems to provide appropriate threshold values for the synthetic images. For MRI segmentation in general it only discriminated between CSF (black pixels), and both the white/gray matter and the cranium (white pixels), so to separate white matter from gray further experiments should be conducted. 
+
+In the presence of non-trivial noise, applying a denoising filter can help Otsu's thresholding scheme, but it can also introduce unwanted additional defects if the filter is too strong.
+
+Finally, it is hard to make sense of what should are appropriate values of $Reg$ without any reference to the original image's $Reg$ score, since lower $Reg$ values are clearly not sufficient evidence of a better transformation, as can be confirmed by visual inspection of the gaussian and bilateral filtered images. 
+
+Therefore, the $E$ measure does not correlate well with what we see in the result images. The $Reg$ term overpowers the $Sim$ term and so would yield a lower $E$ value for gaussian filtering that for bilateral, when, as said before, it can be readily seen that bilateral filtering performs better in terms of denoising. 
+

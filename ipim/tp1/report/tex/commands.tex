@@ -1,0 +1,160 @@
+% generales
+
+%figures
+
+\newcommand{\image}[3]{
+\begin{figure}[H]
+   \centering
+   \includegraphics[scale=#2]{img/#1}
+   \caption{#3}
+\end{figure}
+}
+%definitions
+
+
+\newcommand{\case}[4]{ 
+\begin{cases}
+  #1 &\mbox{si} #3 \\  
+  #2 &\mbox{si}  #4      
+\end{cases}
+}
+\newcommand{\caseotherwise}[3]{ 
+\begin{cases}
+  #1 &\mbox{si } #3 \\  
+  #2 &\mbox{de lo contrario}      
+\end{cases}
+}
+\newcommand{\fdef}[3]{#1 :: #2 \mapsto #3}
+\newcommand{\range}[3]{#1=#2,\dots,#3}
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+
+% Sets
+\newcommand{\normal}{\mathcal{N}}
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\reald}{\reals^d}
+\newcommand{\realdp}{\reals^{d+1}}
+\newcommand{\continuous}{\mathbb{C}}
+\newcommand{\field}{\mathcal{F}}
+% Operators
+\newcommand{\derivative}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\power}[1]{\mathcal P \left({#1}\right)}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\tn}{\rightarrow}
+\newcommand{\nd}{\wedge}
+\newcommand{\ass}{\leftarrow}
+\newcommand{\suml}{\sum\limits}
+\newcommand{\sumi}{\sum\limits_i}
+\newcommand{\inner}[2]{  \left\langle #1 , #2 \right\rangle }
+\newcommand{\innerg}{ \inner{\cdot}{\cdot} }
+   
+
+%variables
+\newcommand{\ve}[1]{\mathbf{#1}}
+\newcommand{\lag}{\mathcal{L}}
+\newcommand{\tra}{\phi}
+
+%environments
+\newcommand{\mathverbatim}[1]{
+\begin{verbatim}[commandchars=\\\{\}, codes={\catcode‘$=3\catcode‘^=7}]
+ #1
+ \end{verbatim} 
+}
+\newcommand{\ma}[1]{\begin{align*} #1 \end{align*}}
+
+%tesina generales
+\newcommand{\texinput}[1]{\input {tex/#1}}
+
+
+\newcommand{\realn}{\mathbb{R}^n}
+\newcommand{\realnp}{\mathbb{R}^{n+1}}
+
+
+%secciones
+
+
+%Aprendizaje
+
+\newcommand{\dprob}{\mathop{\mathcal{D}}}
+\newcommand{\yi}{\mathbf{y_i}}
+\renewcommand{\xi}{\mathbf{x_i}}
+\newcommand{\xv}{\mathbf{x}}
+\newcommand{\yv}{\mathbf{y}}
+\newcommand{\wv}{\mathbf{w}}
+\newcommand{\vv}{\mathbf{v}}
+\newcommand{\zv}{\mathbf{0}}
+\newcommand{\loss}{\ell}
+\newcommand{\rl}{\rho_{\loss}}
+
+\newcommand{\cv}{\textit{CV}}
+\newcommand{\ddp}{\mathcal{P}}
+\newcommand{\cde}{D_e}
+\newcommand{\cdp}{D_p}
+
+
+\newcommand{\muv}{\ve{\mu}}
+\newcommand{\mue}{\hat{\mu}}
+\newcommand{\sde}{\hat{\sigma}}
+\newcommand{\sd}{\sigma}
+
+\newcommand{\ee}{\rho}
+\newcommand{\kvc}{VC con $k$ repeticiones}
+
+
+%SVM
+
+\newcommand{\xj}{\mathbf{x_j}}
+
+%GMM
+\newcommand{\gu}{\mathbf{\mu}_{j,c,k}}
+\newcommand{\gc}{\mathbf{\Sigma}_{j,c,k}}
+\newcommand{\sck}{\ve{s}_{ck}}
+\newcommand{\scj}[1]{\ve{s}_{c#1}[j]}
+\newcommand{\stcj}{S_{j,c}}
+\newcommand{\xvp}{\xv^{+}}
+\newcommand{\xvm}{\xv^{-}}
+\newcommand{\ai}{\alpha_i}
+\newcommand{\aj}{\alpha_j}
+\newcommand{\ui}{u_i}
+\newcommand{\si}{s_i}
+\newcommand{\ri}{r_i}
+
+%Algebra Lineal
+
+\newcommand{\hiper}{\wv \cdot \xv + b =0}
+\newcommand{\hiperlineal}{\wv \cdot \xv =0}
+% MODELO
+
+
+\newcommand{\eqg}{\equiv_{\epsilon}}
+
+
+\newcommand{\tc}[3]{
+\begin{equation}
+  \begin{aligned}[c]
+  #1
+  \end{aligned}
+  \quad #2 \quad
+  \begin{aligned}[c]
+  #3
+  \end{aligned}
+\end{equation} 
+}  
+
+\newcommand{\tci}[2]{ \tc{#1}{\iff}{#2}}
+\newcommand{\equivalencia}[2]{ \tc{c &\equiv_{#1} c'}{\iff}{#2}}
+
+\newcommand{\set}[2]{
+  \left\{ 
+  \begin{aligned}[c]
+  #1
+  \end{aligned}
+  \quad \middle| \quad
+  \begin{aligned}[c]
+  #2
+  \end{aligned}
+  \right\}
+}
+
+% DB
+\newcommand{\rf}{\ve{r}}

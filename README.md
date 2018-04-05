@@ -1,5 +1,15 @@
 # Programming solutions for some courses
 
+* cs231: [CS231n Convolutional Neural Networks for Visual Recognition (Stanford)](http://cs231n.github.io/)
+* gpucuda: [Intro to parallel programming with CUDA](https://developer.nvidia.com/udacity-cs344-intro-parallel-programming) (finished, didn't do some tedious exercises)
+* noc: [Nature of Code](http://natureofcode.com/) (barely started)
+* jurlia: Reinforcement Learning (barely started)
+* ndata: Exploring Neural Data, Coursera/Brown, 2014 (all except last assignment, not available anymore)
+* mlsclassng: Machine Learning, Andrew NG, coursera 2014 (finished)
+* pgm: Probabilistic Graphical Models, (finished)
+* ipim:  Code for Introduction to Medical Image Processing course, UBA, 2014 (finished)
+
+
 
 ## PGM links
 

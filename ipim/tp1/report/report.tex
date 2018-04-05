@@ -1,0 +1,79 @@
+\documentclass[a4paper, 12pt]{article}
+% !TeX spellcheck = en_US
+
+\usepackage[utf8x]{inputenc}
+\usepackage[english]{babel}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[fleqn,tbtags]{mathtools}
+\usepackage{amssymb}
+\usepackage{epigraph}
+\usepackage{fancyhdr} 
+%\usepackage[spanish]{algorithm2e}  
+%\usepackage{algpseudocode}
+\usepackage{subcaption}
+\usepackage{fancyvrb}
+%\decimalpoint
+\usepackage[stretch=10]{microtype}
+\usepackage{booktabs}
+\usepackage[bottom]{footmisc}
+%\usepackage{paralist,pst-func, pst-plot, pst-math, pstricks-add,pgfplots}
+\usepackage{pgfplots}
+%\usetikzlibrary{patterns,matrix,arrows}
+\pgfplotsset{compat=1.9}
+
+\usepackage{hyperref}
+
+% fuentes
+%\usepackage{fouriernc}
+%\usepackage{tgschola}
+%\usepackage[math]{kurier}
+%\usepackage{cmbright} %linda
+%\usepackage{concmath}
+%\usepackage{mathpazo}
+%\usepackage{times}
+
+
+\title{Introducción al procesamiento \\de imágenes médicas\\
+UBA\\
+Trabajo Práctico I\\
+}
+\author{
+        Facundo Manuel Quiroga
+}
+\date{\today}
+
+
+\begin{document}
+
+\maketitle
+
+\input{commands} 
+
+%images, histograms and pixels
+\newcommand{\I}{\ve{I}}
+\newcommand{\h}{\ve{H}}
+\newcommand{\pv}{\ve{p}}
+\newcommand{\qv}{\ve{q}}
+
+\tableofcontents
+
+\section{Introduction}
+\input{intro}
+
+\section{Materials and methods}
+\label{sec:materials}
+\input{methods}
+
+\section{Results}
+\input{results}
+
+\section{Discussion}
+\input{discussion}
+	
+\bibliography{tex/ref}
+\bibliographystyle{unsrt}
+
+\end{document}
+

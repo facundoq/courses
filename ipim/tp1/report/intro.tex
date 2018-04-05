@@ -1,0 +1,69 @@
+% !TeX spellcheck = en_US
+
+The purpose of this lab is to learn about \textbf{segmentation} and \textbf{filtering} methods, in order to apply them in medical image processing, particularly in \textbf{functional magnetic resonance imaging} (\textbf{fMRI}) images \footnote{Digital images.}.
+
+After a short introduction to set the context for the lab, we describe three common image processing algorithms: Gaussian Filtering, Bilateral Filtering and Otsu's method for thresholding. All three algorithms where implemented in Python 2.7 using the Numpy and Matplotlib packages bundled in the PyLab environment, and the PIL image library. The algorithms were tested on a dataset to both (a) have a measure of their correctness (b) evaluate their performance, applicability and, in the case of the two filtering algorithms, their differences.
+
+
+\subsection*{Functional Magnetic Resonance Imaging}
+Functional MRI is a medical imaging technique that measures brain activity by detecting changes in blood flow in the brain. It employs a scanner, similar to those used in traditional MRI, that also measures the change in magnetization between oxygen-rich and oxygen-poor blood. The technique depends on the fact that neurons that are stimulated have an increased blood supply, and so the blood around the neuron becomes more oxygen rich. This phenomena is called the \textbf{Haemodynamic response}. 
+
+Therefore, by measuring the change in magnetization, the change in blood supply can be estimated, which in turn is an indicator of brain activity. This approach is known as the \textbf{Blood-oxygen-level dependent (BOLD)} method.
+
+Traditional 4D MRI generates a time-labeled sequence of 3-dimensional grayscale images. Each image is composed of \textbf{voxels} (a 3D generalization of a pixels). \footnote{Pixels are 2-dimensional and voxels 3-dimensional; the d-dimensional generalization of both are called \textbf{tiles}, but since image processing jargon usually uses the word pixels to refer to 2D tiles which are by far the most common type, we will refer to all three as pixels in the following sections.} Different tissue types generate different voxel intensities, and so the images can expose body structures.
+
+Functional MRI generates (in addition to the MRI anatomical images), a time-labeled sequence of 3-dimensional grayscale images. A voxel in such images measures the BOLD signal in a certain volumetric region of the brain, indicative of brain activity.
+
+Both types of images (functional and anatomical) can come with various types of defects, and so image processing procedures must be applied before performing statistical tests with the information contained in the images.
+
+\subsection*{Segmentation}
+Segmentation methods partition an image into sets of pixels, assigning some kind of label to each set. Segmentation methods are typically used to identify and locate objects and boundaries in images .
+
+The simplest type of segmentation is called \textbf{thresholding}, which splits image pixels into two sets, those above and those below an intensity threshold $k$. 
+
+\imagetwo{examples/mri_original}{1}{MRI image}{examples/thresolded_mri}{1}{Thresholded MRI image. Pixels with intensity above a certain level $k$ have been converted into white pixels, and pixels with intensity below $k$ to black.}
+
+Thresholding can be applied to grayscale images to create binary (ie, black and white) images. Adaptive thresholding techniques find an appropriate intensity  level $k$ such that all pixels with intensity greater that $k$ are transformed into white pixels, and those with intensity less than $k$ into black pixels. Thresholding methods thus divide the pixels in an image in two sets $C_0$ and $C_1$; those less that $k$ form set $C_0$, and those greater than $k$ form $C_1$. What consists of an appropriate intensity level $k$ depends on the problem domain.
+
+In MRI processing, thresholding is used to detect brain areas composed of white matter, gray matter and cerebrospinal fluid, by identifying the sets of pixels that represent each tissue type.
+
+There are of course myriad techniques to perform thresholding; in this lab Otsu's method will be explored
+\cite{otsu1975threshold}, a histogram-based technique. Otsu's method roughly consists of searching, through brute-force, for the intensity level $k$ that minimizes the variance of the intensity values of the two resulting sets of pixels.
+
+\subsection*{Filtering}
+
+A filter is a process that removes or enhances certain features or properties of a signal.
+
+In the context of image processing, filtering techniques are commonly used to remove many types of noise, since image acquisition is rarely a straightforward and error-less procedure. Filtering techniques to remove noise from a signal are called \textbf{denoising} methods.
+
+The goal of image denoising methods is to recover the original image from a noisy measurement,
+
+\begin{equation}
+v(i) = u(i) + n(i)
+\end{equation}
+
+where $v(i)$ is the observed value, $u(i)$ is the “true” value and $n(i)$ is the noise perturbation at a pixel $i$. The best simple way to model the effect of noise on an image is to consider $n(i)$ as a source of gaussian white noise. In that case, $n(i)$ are i.i.d. gaussian values with zero mean and variance $\sigma^2$ .
+
+Several methods have been proposed to remove the noise
+and recover the true image, $u$. Even though there is a wide variety of techniques, most share the same basic approach: denoising is achieved by replacing the intensity of each pixel by some kind of average of the intensity of all the pixels \cite{buades2005non}.
+
+From a frequency perspective, \textbf{low-pass filters}, which selectively remove the high and medium frequency contents of an image, leaving mostly the low frequency components, can be employed as denoising filters. The general hypothesis behind such methods is that noise makes an image less smooth, and so higher frequency contents of an image are probably noise.
+
+In the spatial domain, denoising filters usually employ averaging of pixel intensities to \textbf{smooth} an image. Every pixel in the resulting filtered image then contains a weighted average of the pixels of the original image. By changing the intensity of a pixel to a weighted average of the pixels of an image, the difference in intensities between pixels is reduced, and so the image become more smooth. The key in this averaging procedure is to calculate appropriate weight for each pixel. Averaging filters typically differ in the way that the weights for pixels are calculated.
+
+We can consider two broad filtering approaches: \textbf{domain filtering} and \textbf{range filtering}.
+
+Domain filtering only consider pixels that are spatially close to average, according to some distance measure. To calculate the smoothed value for a pixel $j$, it weights each pixel $i$ in the image in terms of a distance measure $d(i,j)$ between the position of pixel $i$ and that of pixel $j$. 
+
+Range filtering weights each pixel $i$ in terms of some similarity measure $s(i,j)$ between the intensity of pixel $i$    , $v(i)$, and the intensity of the pixel ($j$) whose value is to be replaced, $v(j)$ \footnote{Although, as we explain in the next section, the concept of range filtering alone makes little sense.}. 
+
+This lab explores and compares two simple and well known algorithms: \textbf{gaussian filtering} and \textbf{bilateral filtering} \cite{tomasi1998bilateral}. 
+
+Gaussian filtering is a domain filter that computes weights in terms of some variant of the gaussian function $d(i,j)=a e^{  (i-j)^T \ve{A} (i-j) }$, where $a \in \reals$ is a constant and $\ve{A}$ is a constant positive-definite symmetric matrix, such that $\fdef{d}{\reals^d}{\reals}$. 
+
+Bilateral filtering is both a domain \textit{and} range filter. The simplest case of bilateral filtering uses a gaussian function for the range similarity and also for the domain closeness function \footnote{Bilateral filtering uses the concept of closeness instead of distance because it is more compatible with the concept of similarity and yields a simpler formulation.}. 
+
+Since the noise $n(i)$ is not known, denoising filters must make assumptions that end up distorting the image, and so the transformed image may lack desirable features of the original. Bilateral filtering results in behavior similar to domain filtering, but has the added advantage that it can, in some occasions, preserve edges and other fine detail.
+
+\imagethree{examples/circle_original}{0.5}{Original image.}{examples/circle_gaussian}{0.5}{After applying a Gaussian Filter}{examples/circle_bilateral}{0.5}{After applying bilateral filtering.}
+
